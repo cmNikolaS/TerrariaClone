@@ -6,6 +6,10 @@ A 2D sandbox/mining game inspired by Terraria, written in C++17 with SFML 3.
 ![SFML](https://img.shields.io/badge/SFML-3.0-green)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
+
+<img width="1536" height="800" alt="Screenshot 2026-04-20 22-47-17" src="https://github.com/user-attachments/assets/64df2844-96e8-4fc6-8529-95b3013930d9" />
+
+
 ## Features
 
 - **Procedurally generated world** — random-walk heightmap with surface, subsurface, ores and cave worms
@@ -18,6 +22,8 @@ A 2D sandbox/mining game inspired by Terraria, written in C++17 with SFML 3.
 - **Hotbar** — 9 slots, selectable via number keys, mouse scroll, or click
 - **World map view** — zoom out to see the full world
 - **Restartable worlds** — press R for a fresh seed without relaunching
+
+<img width="1536" height="800" alt="Screenshot 2026-04-20 22-44-51" src="https://github.com/user-attachments/assets/a645147b-f494-4127-af2a-186f5d243922" />
 
 ## Controls
 
