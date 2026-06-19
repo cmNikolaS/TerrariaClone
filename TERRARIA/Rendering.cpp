@@ -42,14 +42,15 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camer
 	int bx = static_cast<int>((center.x - size.x / 2.f) / tileSize - 1);
 	int ex = static_cast<int>((center.x + size.x / 2.f) / tileSize + 1);
 
-	sf::Sprite sprite(rc.blockTextures[(size_t)BlockId::Water]);
+	sf::Sprite sprite(blocksAtlas);
+	sprite.setScale({ 0.5, 0.5 });
 	for (int r = by; r < ey; r++)
 	{
 		for (int c = bx; c < ex; c++)
 		{
-			if (r < 0 || r >= worldH || c < 0 || c >= worldW || wc.map[r][c] == BlockId::Air) continue;
-			size_t t = (size_t)wc.map[r][c];
-			sprite.setTexture(rc.blockTextures[t]);
+			if (r < 0 || r >= worldH || c < 0 || c >= worldW || wc.map[r][c] == Block::air) continue;
+			int t = wc.map[r][c];
+			sprite.setTextureRect(getBlocksTextures(t));
 			sprite.setPosition({ c * tileSize, r * tileSize });
 			rc.window.draw(sprite);
 		}
@@ -85,9 +86,9 @@ void drawHotbar(RenderContext& rc, Player& player)
 		slot.setOutlineColor(i == player.getHotbar().getSelected() ? sf::Color::White : sf::Color(150, 150, 150));
 		rc.window.draw(slot);
 		//block on slot
-		sf::Sprite bl(rc.blockTextures[(ui16)player.getHotbar().getBlockAt(i)]);
+		sf::Sprite bl(blocksAtlas, getBlocksTextures((int)player.getHotbar().getBlockAt(i)));
 		bl.setPosition({ slot.getPosition().x + 4.f, slot.getPosition().y + 4.f });
-		bl.setScale({ 2.f, 2.f });
+		bl.setScale({ 1.f, 1.f });
 		rc.window.draw(bl);
 		//num of slot
 		sf::Text num(rc.font, std::to_string(i + 1), 10);

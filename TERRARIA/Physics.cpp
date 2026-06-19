@@ -3,6 +3,7 @@
 #include "Player.hpp"
 #include "Physics.hpp"
 #include <SFML/Graphics.hpp>
+#include "block.hpp"
 
 void updatePlayer(Player& player, const WorldContext& wc, const float dt, bool creative)
 {
@@ -99,7 +100,7 @@ void updatePlayer(Player& player, const WorldContext& wc, const float dt, bool c
 			cR = true;
 			break;
 		}
-		else if (wc.blocks[(size_t)wc.map[y][left]].solid)
+		else if (wc.blocks.at(wc.map[y][left]).solid)
 		{
 			cL = true;
 			break;

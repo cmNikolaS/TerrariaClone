@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "block.hpp"
 
 void loadBlocks(BlockTextures& text, Blocks& blocks);
 std::vector<ui16> generateHeightMap();

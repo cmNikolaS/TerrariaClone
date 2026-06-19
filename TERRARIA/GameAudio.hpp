@@ -2,6 +2,7 @@
 #include <SFML/Audio.hpp>
 #include <string>
 #include "Constants.hpp"
+#include "block.hpp"
 
 struct GameMusic
 {
@@ -19,9 +20,9 @@ struct GameMusic
 			m.setLooping(true);
 			m.setVolume(25.f);
 			};
-		load(day, "RESOURCES/MUSIC/Overworld Day.mp3");
-		load(night, "RESOURCES/MUSIC/Overworld Night.mp3");
-		load(titleScreen, "RESOURCES/MUSIC/Title Screen.mp3");
+		load(day, "RESOURCES/MUSIC/OverworldDay.mp3");
+		load(night, "RESOURCES/MUSIC/OverworldNight.mp3");
+		load(titleScreen, "RESOURCES/MUSIC/TitleScreen.mp3");
 	}
 	void playNow(Track tr)
 	{

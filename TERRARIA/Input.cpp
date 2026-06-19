@@ -3,6 +3,7 @@
 #include "Player.hpp"
 #include "Constants.hpp"
 #include "Input.hpp"
+#include "block.hpp"
 
 void handlePlayerInput(const sf::Window& window, Player& player, const float dt, bool creative)
 {
@@ -137,7 +138,7 @@ void handleMouseClicks(RenderContext& rc, WorldContext& wc, Player& player, Game
 		int tileY = static_cast<int>((pos.y) / tileSize);
 		if (tileX >= 0 && tileX < worldW && tileY >= 0 && tileY < worldH)
 		{
-			wc.map[tileY][tileX] = BlockId::Air;
+			wc.map[tileY][tileX] = Block::air;
 		}
 	}
 	if (getMouseRightClickPos(clickPos, rc.window) && gc.rightClickPress.getElapsedTime().asSeconds() > rightMouseClickCooldown)

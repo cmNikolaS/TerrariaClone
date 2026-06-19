@@ -154,6 +154,7 @@
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="block.hpp" />
     <ClInclude Include="Constants.hpp" />
     <ClInclude Include="DayNightCycle.hpp" />
     <ClInclude Include="GameAudio.hpp" />

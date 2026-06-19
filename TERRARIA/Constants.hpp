@@ -4,9 +4,10 @@
 #include <string>
 #include <array>
 #include <SFML/Graphics.hpp>
+#include "block.hpp"
 
 constexpr float PI = 3.14159265f;
-constexpr float DAY_LENGTH = 600.f;
+constexpr float DAY_LENGTH = 60.f;
 
 constexpr sf::Vector2f ZombieSize = { 16.f, 32.f };
 
@@ -17,7 +18,7 @@ constexpr ui8 NUM_OF_SLOTS_ = 9;
 constexpr float SLOT_SIZE_ = 40.f;
 constexpr float SLOT_PADDING_ = 4.f;
 
-constexpr ui8 sd = 2;
+constexpr ui8 sd = 5;
 
 const std::string window_title = "Terraria";
 inline ui16 WINDOW_W = 1536;
@@ -50,39 +51,23 @@ enum class MainGameState : ui8
 	Playing
 };
 
-enum class BlockId : ui8 {
-	None = 0,
-	Air,
-	Grass,
-	Dirt,
-	Stone,
-	Water,
-	CoalOre,
-	IronOre,
-	GoldOre,
-	DiamondOre,
-	Barrier,
-	SnowGrass,
-	SnowDirt,
-	Count
-};
-
 enum class MobId : ui8 {
 	None = 0,
 	Zombie,
 	Count
 };
 
-struct Block {
-	BlockId id = BlockId::None;
-	bool solid = true;
-	bool fluid = false;
-};
+inline sf::Texture blocksAtlas;
 
-using Blocks = std::array<Block, (size_t)BlockId::Count>;
-using BlockTextures = std::array<sf::Texture, (size_t)BlockId::Count>;
+inline sf::IntRect getBlocksTextures(int block, int type = 0, const int w = 32, const int h = 32)
+{
+	return sf::IntRect{ sf::Vector2i(block * w, type * 32),  sf::Vector2i{w, h} };
+}
+
+using Blocks = std::array<Block, (size_t)Block::BLOCKS_COUNT>;
+using BlockTextures = std::array<sf::Texture, (size_t)Block::BLOCKS_COUNT>;
 using MobTextures = std::array<sf::Texture, (size_t)MobId::Count>;
-using Map = std::vector<std::vector<BlockId>>;
+using Map = std::vector<std::vector<int>>;
 
 struct RenderContext
 {

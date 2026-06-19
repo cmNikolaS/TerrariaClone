@@ -19,6 +19,7 @@
 #include "DayNightCycle.hpp"
 #include <cmath>
 #include <memory>
+#include "block.hpp"
 
 int main()
 {

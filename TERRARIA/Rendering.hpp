@@ -3,6 +3,7 @@
 #include "Constants.hpp"
 #include "Player.hpp"
 #include "Hotbar.hpp"
+#include "block.hpp"
 
 void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camera);
 

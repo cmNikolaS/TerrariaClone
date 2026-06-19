@@ -65,6 +65,9 @@
     <ClInclude Include="GameAudio.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="block.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Users\cmnikolas\Desktop\separate\texture_16px 534.png">

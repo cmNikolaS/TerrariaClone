@@ -1,48 +1,65 @@
 #include "World.hpp"
 #include "Constants.hpp"
-#include <vector>
 #include <array>
 #include <cstdint>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <vector>
+#include <cassert>
+#include "block.hpp"
 
-void loadBlocks(BlockTextures& text, Blocks& blocks)
+
+void loadBlocks(BlockTextures& text, Blocks &blocks)
 {
-	auto loadText = [&text](const BlockId bi, const std::string& path)
+	//auto loadText = [&text](const Block bi, const std::string& path)
+	//	{
+	//		assert(text[(size_t)bi].loadFromFile(path) && ("Failed to load texture: " + path).c_str());
+	//	};
+
+
+	
+
+	assert(blocksAtlas.loadFromFile("RESOURCES/Textures/textures.png") && "Failed to load textures.png atlas");
+
+
+
+	//loadText(Block::Dirt, "RESOURCES/Textures/dirt.png");
+	//loadText(Block::Grass, "RESOURCES/Textures/grass.png");
+	//loadText(Block::Stone, "RESOURCES/Textures/stone.png");
+	//loadText(Block::Water, "RESOURCES/Textures/water.png");
+	//loadText(Block::DiamondOre, "RESOURCES/Textures/diamondOre.png");
+	//loadText(Block::CoalOre, "RESOURCES/Textures/coalOre.png");
+	//loadText(Block::GoldOre, "RESOURCES/Textures/goldOre.png");
+	//loadText(Block::IronOre, "RESOURCES/Textures/ironOre.png");
+	//loadText(Block::Barrier, "RESOURCES/Textures/barrier.png");
+	//loadText(Block::SnowGrass, "RESOURCES/Textures/snowGrass.png");
+	//loadText(Block::SnowDirt, "RESOURCES/Textures/snowDirt.png");
+
+
+	auto addBlock = [&blocks](const int bl, const bool solid = true, const bool fluid = false)
 		{
-			assert(text[(size_t)bi].loadFromFile(path) && ("Failed to load texture: " + path).c_str());
+			blocks.at(bl).type = bl;
+			blocks.at(bl).solid = solid;
+			blocks.at(bl).fluid = fluid;
 		};
 
-	auto addBlock = [&blocks](const BlockId bi, const bool solid = true, const bool fluid = false)
-		{
-			blocks[(size_t)bi] = { bi, solid, fluid };
-		};
 
-	loadText(BlockId::Dirt, "RESOURCES/Textures/dirt.png");
-	loadText(BlockId::Grass, "RESOURCES/Textures/grass.png");
-	loadText(BlockId::Stone, "RESOURCES/Textures/stone.png");
-	loadText(BlockId::Water, "RESOURCES/Textures/water.png");
-	loadText(BlockId::DiamondOre, "RESOURCES/Textures/diamondOre.png");
-	loadText(BlockId::CoalOre, "RESOURCES/Textures/coalOre.png");
-	loadText(BlockId::GoldOre, "RESOURCES/Textures/goldOre.png");
-	loadText(BlockId::IronOre, "RESOURCES/Textures/ironOre.png");
-	loadText(BlockId::Barrier, "RESOURCES/Textures/barrier.png");
-	loadText(BlockId::SnowGrass, "RESOURCES/Textures/snowGrass.png");
-	loadText(BlockId::SnowDirt, "RESOURCES/Textures/snowDirt.png");
-
-	addBlock(BlockId::Air, false, false);
-	addBlock(BlockId::Grass, true, false);
-	addBlock(BlockId::Dirt, true, false);
-	addBlock(BlockId::Stone, true, false);
-	addBlock(BlockId::Water, false, true);
-	addBlock(BlockId::CoalOre, true, false);
-	addBlock(BlockId::DiamondOre, true, false);
-	addBlock(BlockId::IronOre, true, false);
-	addBlock(BlockId::GoldOre, true, false);
-	addBlock(BlockId::Barrier, true, false);
-	addBlock(BlockId::SnowGrass, true, false);
-	addBlock(BlockId::SnowDirt, true, false);
+	addBlock(Block::air, false, false);
+	addBlock(Block::grassBlock, true, false);
+	addBlock(Block::dirt, true, false);
+	addBlock(Block::stone, true, false);
+	//addBlock(Block::Water, false, true);
+	//addBlock(Block::CoalOre, true, false);
+	//addBlock(Block::DiamondOre, true, false);
+	addBlock(Block::iron, true, false);
+	addBlock(Block::gold, true, false);
+	//addBlock(Block::Barrier, true, false);
+	addBlock(Block::snow, true, false);
+	addBlock(Block::snow, true, false);
 }
+
+
 
 std::vector<ui16> generateHeightMap()
 {
@@ -94,16 +111,16 @@ void generateSurface(Map& map, const std::vector<ui16>& hm)
 		for (ui16 y = 0; y < worldH; y++)
 		{
 			if (y < surf)
-				map[y][x] = BlockId::Air;
+				map[y][x] = Block::air;
 			else if (y == surf)
-				map[y][x] = BlockId::Grass;
+				map[y][x] = Block::grassBlock;
 			else if (y < surf + 3)
-				map[y][x] = BlockId::Dirt;
+				map[y][x] = Block::dirt;
 			else
-				map[y][x] = BlockId::Stone;
-			map[y][0] = map[y][worldW - 1] = BlockId::Barrier;
+				map[y][x] = Block::stone;
+			map[y][0] = map[y][worldW - 1] = Block::clay;
 		}
-		map[0][x] = map[worldH - 1][x] = BlockId::Barrier;
+		map[0][x] = map[worldH - 1][x] = Block::clay;
 	}
 }
 void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
@@ -112,29 +129,29 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 	{
 		for (ui16 j = 0; j < worldW; j++)
 		{
-			BlockId& b = map[i][j];
+			int b = map[i][j];
 
-			if (b == BlockId::Air)
+			if (b == Block::air)
 			{
 				ui16 d = worldH - i;
 				if (d >= minimalWorldGenHeight && d <= waterGenHeight)
 				{
-					b = BlockId::Water;
+					b = Block::snowBricks;
 				}
 			}
-			else if (b == BlockId::Grass && i < (worldH - coldBiomHeight))
+			else if (b == Block::grassBlock && i < (worldH - coldBiomHeight))
 			{
-				b = BlockId::SnowGrass;
+				b = Block::snow;
 			}
-			else if (b == BlockId::Dirt && i < (worldH - coldBiomHeight))
+			else if (b == Block::dirt && i < (worldH - coldBiomHeight))
 			{
-				b = BlockId::SnowDirt;
+				b = Block::snow;
 			}
-			else if (b == BlockId::Stone)
+			else if (b == Block::stone)
 			{
 				if (rand() % wormChance == 0)
 				{
-					b = BlockId::Air;
+					b = Block::air;
 					worms.push_back({ i, j });
 					continue;
 				}
@@ -143,22 +160,22 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 				if (r < 9000) continue;
 				if (r < 9400)
 				{
-					b = BlockId::CoalOre;
+					b = Block::air;
 				}
 				else if (r < 9700)
 				{
-					b = BlockId::IronOre;
+					b = Block::iron;
 				}
 				else if (r < 9900)
 				{
-					b = BlockId::GoldOre;
+					b = Block::gold;
 				}
 				else
 				{
-					b = BlockId::DiamondOre;
+					b = Block::rubyBlock;
 				}
-				if (b == BlockId::Stone) continue;
-				std::array<std::reference_wrapper<BlockId>, 8> sides{
+				if (b == Block::stone) continue;
+				std::array<int, 8> sides{
 					map[i - 1][j],
 					map[i + 1][j],
 					map[i][j - 1],
@@ -173,7 +190,7 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 
 				for (auto& s : sides)
 				{
-					if (s == BlockId::Stone)
+					if (s == Block::stone)
 					{
 						if (rand() % 100 < chance)
 						{
@@ -239,10 +256,10 @@ void doWorm(Map& map, sf::Vector2i worm)
 				hor--;
 			}
 		}
-		if (np.x >= worldH - 2 || np.x < 0 || np.y < 0 || np.y >= worldW - 2 || map[np.x][np.y] != BlockId::Stone) return;
-		map[np.x][np.y] = BlockId::Air;
+		if (np.x >= worldH - 2 || np.x < 0 || np.y < 0 || np.y >= worldW - 2 || map[np.x][np.y] != Block::stone) return;
+		map[np.x][np.y] = Block::air;
 		if (np.y < worldW - 2 && np.y - 1 > 0 && rand() % 2)
-			map[np.x][np.y + 1] = BlockId::Air;
+			map[np.x][np.y + 1] = Block::air;
 	}
 }
 
@@ -254,7 +271,7 @@ void generateCaves(Map& map, const std::vector<sf::Vector2i>& worms)
 
 Map generateMap()
 {
-	std::vector<std::vector<BlockId>> map(worldH, std::vector<BlockId>(worldW, BlockId::Air));
+	Map map(worldH, std::vector<int>(worldW, Block::air));
 	std::vector<sf::Vector2i> worms;
 	generateSurface(map, generateHeightMap());
 	generateSubsurface(map, worms);
@@ -266,8 +283,8 @@ const sf::Vector2f playerSpawnPos(const WorldContext& wc)
 	auto isSolid = [&](int x, int y) { return wc.blocks[(size_t)wc.map[y][x]].solid; };
 	auto isFluid = [&](int x, int y) { return wc.blocks[(size_t)wc.map[y][x]].fluid; };
 
-	constexpr int tilesW = (playerW + tileSize - 1) / tileSize;
-	constexpr int tilesH = (playerH + tileSize - 1) / tileSize;
+	constexpr int tilesW = static_cast<int>((playerW + tileSize - 1) / tileSize);
+	constexpr int tilesH = static_cast<int>((playerH + tileSize - 1) / tileSize);
 
 	auto trySpawn = [&](int x) -> std::optional<sf::Vector2f>
 		{

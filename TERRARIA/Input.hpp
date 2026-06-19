@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
 #include "Constants.hpp"
+#include "block.hpp"
 
 void handlePlayerInput(const sf::Window& window, Player& player, const float dt, bool creative);
 

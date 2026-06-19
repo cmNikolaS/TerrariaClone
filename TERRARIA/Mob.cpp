@@ -6,6 +6,7 @@
 #include <string>
 #include <memory>
 #include <array>
+#include "block.hpp"
 
 void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 {
@@ -129,7 +130,7 @@ void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const
 		while (zp.y+=tileSize)
 		{
 			if (zp.y / tileSize >= worldH) return;
-			if (wc.map[(size_t)zp.y / tileSize + 1][(size_t)zp.x / tileSize] != BlockId::Air) break;
+			if (wc.map[(size_t)zp.y / tileSize + 1][(size_t)zp.x / tileSize] != Block::air) break;
 		}
 		zp.y-=tileSize*3.f;
 		

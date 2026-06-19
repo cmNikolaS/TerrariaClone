@@ -3,6 +3,7 @@
 #include "Constants.hpp"
 #include "Hotbar.hpp"
 #include <cmath>
+#include "block.hpp"
 
 class Player final
 {
