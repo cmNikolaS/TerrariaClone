@@ -9,7 +9,7 @@
 constexpr float PI = 3.14159265f;
 constexpr float DAY_LENGTH = 60.f;
 
-constexpr sf::Vector2f ZombieSize = { 16.f, 32.f };
+constexpr sf::Vector2f ZombieSize = { 40.f, 84.f };
 
 using ui8 = std::uint8_t;
 using ui16 = std::uint16_t;
@@ -24,14 +24,14 @@ const std::string window_title = "Terraria";
 inline ui16 WINDOW_W = 1536;
 inline ui16 WINDOW_H = 800;
 
-constexpr float tileSize = 16.f;
+constexpr float tileSize = 32.f;
 constexpr ui16 worldW = 4096 / sd;
 constexpr ui16 worldH = 1024 / sd;
 
 constexpr ui8 darknessLevel = 100;
 
-constexpr float playerW = 15.f;
-constexpr float playerH = 31.f;
+constexpr float playerW = 40.f;
+constexpr float playerH = 84.f;
 
 constexpr ui16 wormChance = 120; // 1 / wormChance
 constexpr ui16 ZombieChance = 3;
@@ -51,28 +51,13 @@ enum class MainGameState : ui8
 	Playing
 };
 
-enum class MobId : ui8 {
-	None = 0,
-	Zombie,
-	Count
-};
-
-inline sf::Texture blocksAtlas;
-
-inline sf::IntRect getBlocksTextures(int block, int type = 0, const int w = 32, const int h = 32)
-{
-	return sf::IntRect{ sf::Vector2i(block * w, type * 32),  sf::Vector2i{w, h} };
-}
-
-using Blocks = std::array<Block, (size_t)Block::BLOCKS_COUNT>;
-using BlockTextures = std::array<sf::Texture, (size_t)Block::BLOCKS_COUNT>;
-using MobTextures = std::array<sf::Texture, (size_t)MobId::Count>;
+using MobTextures = std::vector<sf::Texture>;
 using Map = std::vector<std::vector<int>>;
 
 struct RenderContext
 {
 	sf::RenderWindow window;
-	BlockTextures blockTextures;
+	sf::Texture blocksAtlas;
 	MobTextures mobTextures;
 	sf::Font font;
 	RenderContext(sf::VideoMode vm, const std::string& title) : window(vm, title)
@@ -82,8 +67,8 @@ struct RenderContext
 
 struct WorldContext
 {
-	Map map;
-	Blocks blocks;
+	Map map = {};
+	std::vector<Block> blocks = {};
 };
 
 struct GameState

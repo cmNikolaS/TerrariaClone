@@ -22,15 +22,15 @@ public:
 
 
 	Hotbar() {
-		slots[0] = { Block::grass, 64 };
+		slots[0] = { Block::grassBlock, 64 };
 		slots[1] = { Block::dirt, 64 };
 		slots[2] = { Block::stone, 64 };
-		slots[3] = { Block::snow, 64 }; //water here should
+		slots[3] = { Block::water, 64 };
 		slots[4] = { Block::iron, 64 };
 		slots[5] = { Block::gold, 64 };
-		slots[6] = { Block::air, 64 };
+		slots[6] = { Block::clay, 64 };
 		slots[7] = { Block::rubyBlock, 64 };
-		slots[8] = { Block::gold, 64 };
+		slots[8] = { Block::door, 64 };
 	}
 
 	int getSelectedBlock() const

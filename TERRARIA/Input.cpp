@@ -114,11 +114,11 @@ void handleEvents(sf::RenderWindow& window, Player& player,
 
 		if (auto scroll = event->getIf<sf::Event::MouseWheelScrolled>())
 		{
-			if (scrollPress.getElapsedTime().asSeconds() < 0.25f) continue;
+			if (scrollPress.getElapsedTime().asSeconds() < 0.05f) continue;
 			scrollPress.restart();
 			if (gs.playerCamera)
 			{
-				if (scroll->delta < 0)
+				if (scroll->delta > 0)
 					player.getHotbar().scrollDown();
 				else
 					player.getHotbar().scrollUp();

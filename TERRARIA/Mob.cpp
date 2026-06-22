@@ -98,16 +98,6 @@ Zombie::Zombie(sf::Vector2f p, const MobTextures& mobT) : Mob(p, ZombieSize), sp
 	sprite.setScale({ size.x / texSize.x, size.y / texSize.y });
 }
 
-void loadMobs(MobTextures& text)
-{
-	auto loadText = [&text](const MobId mi, const std::string& path)
-		{
-			assert(text[(size_t)mi].loadFromFile(path) && ("Failed to load texture: " + path).c_str());
-		};
-
-	loadText(MobId::Zombie, "RESOURCES/Textures/zombie.png");
-}
-
 void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures,  const float dt, const DayNightCycle &cycle, bool spawn)
 {
 	if (cycle.isItDay())

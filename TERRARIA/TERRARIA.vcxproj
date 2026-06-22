@@ -146,11 +146,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="blocks.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mob.cpp" />
+    <ClCompile Include="permaAssert.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="textures.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,9 +164,11 @@
     <ClInclude Include="Hotbar.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Mob.hpp" />
+    <ClInclude Include="permaAssert.hpp" />
     <ClInclude Include="Physics.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Rendering.hpp" />
+    <ClInclude Include="textures.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <ItemGroup>

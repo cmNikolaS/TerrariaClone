@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Hotbar.hpp"
 #include <string>
+#include "textures.hpp"
 
 void drawMenu(RenderContext& rc)
 {
@@ -42,8 +43,8 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camer
 	int bx = static_cast<int>((center.x - size.x / 2.f) / tileSize - 1);
 	int ex = static_cast<int>((center.x + size.x / 2.f) / tileSize + 1);
 
-	sf::Sprite sprite(blocksAtlas);
-	sprite.setScale({ 0.5, 0.5 });
+	sf::Sprite sprite(rc.blocksAtlas);
+	sprite.setScale({ 1, 1 });
 	for (int r = by; r < ey; r++)
 	{
 		for (int c = bx; c < ex; c++)
@@ -86,7 +87,7 @@ void drawHotbar(RenderContext& rc, Player& player)
 		slot.setOutlineColor(i == player.getHotbar().getSelected() ? sf::Color::White : sf::Color(150, 150, 150));
 		rc.window.draw(slot);
 		//block on slot
-		sf::Sprite bl(blocksAtlas, getBlocksTextures((int)player.getHotbar().getBlockAt(i)));
+		sf::Sprite bl(rc.blocksAtlas, getBlocksTextures((int)player.getHotbar().getBlockAt(i)));
 		bl.setPosition({ slot.getPosition().x + 4.f, slot.getPosition().y + 4.f });
 		bl.setScale({ 1.f, 1.f });
 		rc.window.draw(bl);
@@ -98,10 +99,18 @@ void drawHotbar(RenderContext& rc, Player& player)
 	}
 }
 
+void drawFPS(RenderContext& rc)
+{
+
+}
+
 void drawGameUI(RenderContext& rc, Player& player)
 {
 	//coordinates
 	drawCoordinates(rc, player);
+
+	//fps
+	drawFPS(rc);
 
 	//hotbar
 	drawHotbar(rc, player);

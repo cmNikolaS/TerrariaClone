@@ -20,10 +20,15 @@
 #include <cmath>
 #include <memory>
 #include "block.hpp"
+#include "textures.hpp"
+#include "permaAssert.hpp"
 
 int main()
 {
 	GameMusic gm;
+	WorldContext wc;
+	sf::Texture blocksAtlas;
+	initBlocks(wc.blocks);
 	gm.loadAll();
 	std::srand(static_cast<unsigned int>(time(0)));
 	MainGameState mgs = MainGameState::Menu;
@@ -31,8 +36,10 @@ int main()
 	while (gs.restart)
 	{
 		gs.restart = false;
+		wc.map = generateMap();
+
 		//background and darkness (for night or contrast)
-		sf::Texture backgroundText("RESOURCES/background.png");
+		sf::Texture backgroundText("RESOURCES/forestBG.png");
 		sf::Sprite background(backgroundText);
 		background.setScale({ (float)WINDOW_W / backgroundText.getSize().x, (float)WINDOW_H / backgroundText.getSize().y });
 		sf::RectangleShape darkness({ (float)WINDOW_W, (float)WINDOW_H });
@@ -40,11 +47,8 @@ int main()
 
 		//RENDER CONTEXT && WORLD CONTEXT
 		RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
-		assert(rc.font.openFromFile("RESOURCES/cursyger.ttf") && "Cant open Font");
-		WorldContext wc;
-		wc.map = generateMap();
-		loadBlocks(rc.blockTextures, wc.blocks);
-		loadMobs(rc.mobTextures);
+
+		initTextures(rc);
 
 		//loading player
 		sf::Texture pt;
@@ -76,6 +80,9 @@ int main()
 			handleEvents(rc.window, player, gc.scrollPress, gs, mgs);
 			if (gs.restart) break;
 			if (gs.close) rc.window.close();
+
+			if (dt > 1.f / 20.f)
+				dt = 1.f / 20.f;
 
 			rc.window.clear();
 

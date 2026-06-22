@@ -10,57 +10,6 @@
 #include "block.hpp"
 
 
-void loadBlocks(BlockTextures& text, Blocks &blocks)
-{
-	//auto loadText = [&text](const Block bi, const std::string& path)
-	//	{
-	//		assert(text[(size_t)bi].loadFromFile(path) && ("Failed to load texture: " + path).c_str());
-	//	};
-
-
-	
-
-	assert(blocksAtlas.loadFromFile("RESOURCES/Textures/textures.png") && "Failed to load textures.png atlas");
-
-
-
-	//loadText(Block::Dirt, "RESOURCES/Textures/dirt.png");
-	//loadText(Block::Grass, "RESOURCES/Textures/grass.png");
-	//loadText(Block::Stone, "RESOURCES/Textures/stone.png");
-	//loadText(Block::Water, "RESOURCES/Textures/water.png");
-	//loadText(Block::DiamondOre, "RESOURCES/Textures/diamondOre.png");
-	//loadText(Block::CoalOre, "RESOURCES/Textures/coalOre.png");
-	//loadText(Block::GoldOre, "RESOURCES/Textures/goldOre.png");
-	//loadText(Block::IronOre, "RESOURCES/Textures/ironOre.png");
-	//loadText(Block::Barrier, "RESOURCES/Textures/barrier.png");
-	//loadText(Block::SnowGrass, "RESOURCES/Textures/snowGrass.png");
-	//loadText(Block::SnowDirt, "RESOURCES/Textures/snowDirt.png");
-
-
-	auto addBlock = [&blocks](const int bl, const bool solid = true, const bool fluid = false)
-		{
-			blocks.at(bl).type = bl;
-			blocks.at(bl).solid = solid;
-			blocks.at(bl).fluid = fluid;
-		};
-
-
-	addBlock(Block::air, false, false);
-	addBlock(Block::grassBlock, true, false);
-	addBlock(Block::dirt, true, false);
-	addBlock(Block::stone, true, false);
-	//addBlock(Block::Water, false, true);
-	//addBlock(Block::CoalOre, true, false);
-	//addBlock(Block::DiamondOre, true, false);
-	addBlock(Block::iron, true, false);
-	addBlock(Block::gold, true, false);
-	//addBlock(Block::Barrier, true, false);
-	addBlock(Block::snow, true, false);
-	addBlock(Block::snow, true, false);
-}
-
-
-
 std::vector<ui16> generateHeightMap()
 {
 	std::vector<ui16> hm(worldW, averageWorldGenHeight);
@@ -136,7 +85,7 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 				ui16 d = worldH - i;
 				if (d >= minimalWorldGenHeight && d <= waterGenHeight)
 				{
-					b = Block::snowBricks;
+					b = Block::water;
 				}
 			}
 			else if (b == Block::grassBlock && i < (worldH - coldBiomHeight))
@@ -202,6 +151,7 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 				}
 
 			}
+			map[i][j] = b;
 		}
 	}
 }

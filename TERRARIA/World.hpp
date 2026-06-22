@@ -7,7 +7,6 @@
 #include <SFML/Graphics.hpp>
 #include "block.hpp"
 
-void loadBlocks(BlockTextures& text, Blocks& blocks);
 std::vector<ui16> generateHeightMap();
 void generateSurface(Map& map, const std::vector<ui16>& hm);
 void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms);

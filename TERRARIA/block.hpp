@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <vector>
 
 struct Block
 {
@@ -63,8 +64,35 @@ struct Block
 		boneWordrobe,
 		boneBookShelf,
 		bonePlatform,
+		water,
 
 		BLOCKS_COUNT,
 	};
 
+	Block& setType(uint16_t type)
+	{
+		this->type = type;
+		return *this;
+	}
+
+	Block& setVariant(uint16_t variant)
+	{
+		this->variant = variant;
+		return *this;
+	}
+
+	Block& setSolid(bool solid)
+	{
+		this->solid = solid;
+		return *this;
+	}
+
+	Block& setFluid(bool fluid)
+	{
+		this->fluid = fluid;
+		return *this;
+	}
+
 };
+
+void initBlocks(std::vector<Block> &blocks);

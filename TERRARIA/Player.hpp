@@ -10,11 +10,11 @@ class Player final
 private:
 	sf::Texture text;
 	sf::Sprite sprite;
-	const float gravity = 350.f;
+	const float gravity = 2200.f;
 	sf::Vector2f velocity = { 0, 0 };
-	float walkingSpeed = 200.f;
+	float walkingSpeed = 340.f;
 	const sf::Vector2f maxvel = { 400.f, 800.f };
-	float jumpVel = 250;
+	float jumpVel = 900;
 	bool jumped = false;
 	bool creativeGoingDown = false;
 	Hotbar hotbar;

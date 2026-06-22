@@ -13,6 +13,11 @@ protected:
 	sf::Vector2f size;
 
 public:
+	enum MobId {
+		None = 0,
+		Zombie,
+		Count
+	};
 	Mob(sf::Vector2f p, sf::Vector2f s) : pos(p), size(s) {}
 	sf::Vector2f getSize()const {
 		return size;
@@ -49,4 +54,3 @@ public:
 
 void drawMobs(RenderContext& rc, const std::vector<std::unique_ptr<Mob>>& mobs);
 void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures ,const float dt, const DayNightCycle& cycle, bool spawn);
-void loadMobs(MobTextures& text);
