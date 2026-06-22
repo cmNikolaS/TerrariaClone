@@ -5,11 +5,15 @@
 void initBlocks(std::vector<Block>& blocks)
 {
 	blocks.resize(Block::BLOCKS_COUNT, {});
-	blocks[Block::grassBlock].setType(Block::grassBlock).setSolid(true);
-	blocks[Block::dirt].setType(Block::dirt).setSolid(true);
-	blocks[Block::stone].setType(Block::stone).setSolid(true);
-	blocks[Block::water].setType(Block::water).setFluid(true);
-	blocks[Block::iron].setType(Block::iron).setSolid(true);
-	blocks[Block::gold].setType(Block::gold).setSolid(true);
-	blocks[Block::snow].setType(Block::snow).setSolid(true);
+	
+	for (int i = 0; i < Block::BLOCKS_COUNT; i++)
+		blocks[i].setType(i);
+
+	blocks[Block::grassBlock].setSolid(true);
+	blocks[Block::dirt].setSolid(true);
+	blocks[Block::stone].setSolid(true);
+	blocks[Block::water].setFluid(true);
+	blocks[Block::iron].setSolid(true);
+	blocks[Block::gold].setSolid(true);
+	blocks[Block::snow].setSolid(true);
 }
