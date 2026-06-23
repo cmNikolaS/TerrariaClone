@@ -41,6 +41,18 @@ private:
 	float jumpStr = -300.f;
 	bool onGround = false;
 	float velocityX = 0.f;
+	float randomPositionToGoTimer = 5.f;
+	float standStillTimer = 5.f;
+	sf::Vector2f randomPositionToGo = {};
+	enum state
+	{
+		None = 0,
+		followPlayer,
+		moveRandomly,
+		standStill
+	};
+
+	uint16_t currentState = state::None;
 
 public:
 	Zombie(sf::Vector2f p, const MobTextures& mobT);

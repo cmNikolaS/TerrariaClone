@@ -7,19 +7,25 @@
 #include <memory>
 #include <array>
 #include "block.hpp"
+#include <cmath>
+#include "random.hpp"
 
 void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 {
 	auto pp = player.getPos();
 	auto lp = pos;
 
-	bool pass = true;
+	float a = std::pow(pp.x - pos.x, 2);
+	float b = std::pow(pp.y - pos.y, 2);
+	float c = std::sqrt(a + b) / tileSize;
+
+	std::random_device rd;
+	std::mt19937 rng(rd());
 
 	auto isSolid = [&wc](size_t x, size_t y)
 		{
 			return (wc.blocks[(size_t)wc.map[y][x]].solid);
 		};
-
 	auto checkCollision = [&](float x, float y) -> bool {
 		size_t left = static_cast<size_t>(x / tileSize);
 		size_t right = static_cast<size_t>((x + size.x - 1) / tileSize);
@@ -32,49 +38,151 @@ void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 			isSolid(right, down);
 		};
 
-	velocityY += gravity * dt;
-	float newY = pos.y + velocityY * dt;
-
-	if (checkCollision(pos.x, newY))
+	if (c < 15.f)
 	{
-		if (velocityY > 0)
-		{
-			onGround = true;
-		}
-
-		velocityY = 0.f;
-
+		currentState = state::followPlayer;
 	}
-	else {
-		onGround = false;
-		pos.y = newY;
+	else if (currentState == state::followPlayer || currentState == state::None)
+	{
+		currentState = state::moveRandomly;
+		randomPositionToGo = { pos.x + getRandomFloat(rng, -7.f, 7.f)*32.f, pos.y};
+		randomPositionToGoTimer = getRandomFloat(rng, 3.f, 7.f);
 	}
 
-	float dx = pp.x - pos.x;
-
-	if (std::abs(dx) > 5.f)
+	switch (currentState)
 	{
-		float direction = 1.f;
-		if (dx < 0) direction = -direction;
-		velocityX = -direction;
+	case state::followPlayer:
+	{
+		bool pass = true;
 
-		float newX = pos.x + moveSpeed * direction * dt;
+		velocityY += gravity * dt;
+		float newY = pos.y + velocityY * dt;
 
-		if (!checkCollision(newX, pos.y))
+		if (checkCollision(pos.x, newY))
 		{
-			pos.x = newX;
+			if (velocityY > 0)
+			{
+				onGround = true;
+			}
+			velocityY = 0.f;
 		}
-		else if (onGround)
+		else {
+			onGround = false;
+			pos.y = newY;
+		}
+
+		float dx = pp.x - pos.x;
+
+		if (std::abs(dx) > 5.f)
 		{
-			//if (!checkCollision(newX, pos.y - tileSize))
-			//{
+			float direction = 1.f;
+			if (dx < 0) direction = -direction;
+			velocityX = -direction;
+
+			float newX = pos.x + moveSpeed * direction * dt;
+
+			if (!checkCollision(newX, pos.y))
+			{
+				pos.x = newX;
+			}
+			else if (onGround)
+			{
 				velocityY = jumpStr;
 				onGround = false;
-			//}
+			}
 		}
+		break;
 	}
-	updateDirection();
+	case state::moveRandomly:
+	{
+		randomPositionToGoTimer -= dt;
+		if (randomPositionToGoTimer <= 0.f)
+		{
+			currentState = state::standStill;
+			standStillTimer = getRandomFloat(rng, 3.5f, 7.f);
+			break;
+		}
 
+		bool pass = true;
+
+		velocityY += gravity * dt;
+		float newY = pos.y + velocityY * dt;
+
+		if (checkCollision(pos.x, newY))
+		{
+			if (velocityY > 0)
+			{
+				onGround = true;
+			}
+			velocityY = 0.f;
+		}
+		else {
+			onGround = false;
+			pos.y = newY;
+		}
+
+		float dx = randomPositionToGo.x - pos.x;
+
+		if (std::abs(dx) > 5.f)
+		{
+			float direction = 1.f;
+			if (dx < 0) direction = -direction;
+			velocityX = -direction;
+
+			float newX = pos.x + moveSpeed * direction * dt;
+
+			if (!checkCollision(newX, pos.y))
+			{
+				pos.x = newX;
+			}
+			else if (onGround)
+			{
+				velocityY = jumpStr;
+				onGround = false;
+			}
+		}
+
+		break;
+	}
+	case state::standStill:
+	{
+		standStillTimer -= dt;
+		if (standStillTimer <= 0.f)
+		{
+			currentState = state::moveRandomly;
+			randomPositionToGo = { pos.x + getRandomFloat(rng, -7.f, 7.f) * 32.f, pos.y };
+			randomPositionToGoTimer = getRandomFloat(rng, 3.f, 7.f);
+			break;
+		}
+
+		bool pass = true;
+
+		velocityY += gravity * dt;
+		float newY = pos.y + velocityY * dt;
+
+		if (checkCollision(pos.x, newY))
+		{
+			if (velocityY > 0)
+			{
+				onGround = true;
+			}
+			velocityY = 0.f;
+		}
+		else {
+			onGround = false;
+			pos.y = newY;
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+
+
+
+
+	updateDirection();
 }
 
 void Zombie::updateDirection()
