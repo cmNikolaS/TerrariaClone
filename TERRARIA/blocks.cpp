@@ -16,4 +16,5 @@ void initBlocks(std::vector<Block>& blocks)
 	blocks[Block::iron].setSolid(true);
 	blocks[Block::gold].setSolid(true);
 	blocks[Block::snow].setSolid(true);
+	blocks[Block::barrier].setSolid(true);
 }

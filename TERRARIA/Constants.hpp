@@ -18,7 +18,7 @@ constexpr ui8 NUM_OF_SLOTS_ = 9;
 constexpr float SLOT_SIZE_ = 40.f;
 constexpr float SLOT_PADDING_ = 4.f;
 
-constexpr ui8 sd = 5;
+constexpr ui8 sd = 8;
 
 const std::string window_title = "Terraria";
 inline ui16 WINDOW_W = 1536;
@@ -58,6 +58,7 @@ struct RenderContext
 {
 	sf::RenderWindow window;
 	sf::Texture blocksAtlas;
+	sf::Texture backgroundTexture;
 	MobTextures mobTextures;
 	sf::Font font;
 	RenderContext(sf::VideoMode vm, const std::string& title) : window(vm, title)

@@ -30,7 +30,7 @@ public:
 		slots[5] = { Block::gold, 64 };
 		slots[6] = { Block::clay, 64 };
 		slots[7] = { Block::rubyBlock, 64 };
-		slots[8] = { Block::door, 64 };
+		slots[8] = { Block::barrier, 64 };
 	}
 
 	int getSelectedBlock() const

@@ -22,9 +22,30 @@
 #include "block.hpp"
 #include "textures.hpp"
 #include "permaAssert.hpp"
+#include "background.hpp"
+
+void updateCamera(sf::View& camera, sf::Vector2f playerPosition)
+{
+	sf::Vector2f cameraCenter = playerPosition;
+	sf::Vector2f cameraSize = camera.getSize();
+	
+	float worldWidthPixels = worldW * tileSize;
+	float worldHeightPixels = worldH * tileSize;
+
+	float minX = cameraSize.x / 2.f + tileSize;
+	float maxX = worldWidthPixels - minX;
+
+	float minY = cameraSize.y / 2.f + tileSize;
+	float maxY = worldHeightPixels - minY;
+
+	cameraCenter.x = std::clamp(cameraCenter.x, minX, maxX);
+	cameraCenter.y = std::clamp(cameraCenter.y, minY, maxY);
+	camera.setCenter(cameraCenter);
+}
 
 int main()
 {
+	Background background;
 	GameMusic gm;
 	WorldContext wc;
 	sf::Texture blocksAtlas;
@@ -39,16 +60,15 @@ int main()
 		wc.map = generateMap();
 
 		//background and darkness (for night or contrast)
-		sf::Texture backgroundText("RESOURCES/forestBG.png");
-		sf::Sprite background(backgroundText);
-		background.setScale({ (float)WINDOW_W / backgroundText.getSize().x, (float)WINDOW_H / backgroundText.getSize().y });
-		sf::RectangleShape darkness({ (float)WINDOW_W, (float)WINDOW_H });
-		darkness.setFillColor(sf::Color({ 0, 0, 0, darknessLevel }));
-
-		//RENDER CONTEXT && WORLD CONTEXT
+		
 		RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
 
 		initTextures(rc);
+		
+		sf::RectangleShape darkness({ (float)WINDOW_W, (float)WINDOW_H });
+		darkness.setFillColor(sf::Color({ 0, 0, 0, darknessLevel }));
+
+		
 
 		//loading player
 		sf::Texture pt;
@@ -113,16 +133,15 @@ int main()
 					player.setVelocity({ 0.f, player.getVelocity().y });
 					handlePlayerInput(rc.window, player, dt, gs.creativeMode);
 					updatePlayer(player, wc, dt, gs.creativeMode);
+					
+					updateCamera(player.getCamera(), player.getPos());
 
 					//View
-					player.getCamera().setCenter(player.getPos());
 					rc.window.setView(player.getCamera());
-					background.setPosition(getCameraPos(player.getCamera()));
-					darkness.setPosition(background.getPosition());
 					updateDarkness(darkness, cycle);
 					
 					//Drawing
-					rc.window.draw(background);
+					background.draw(dt, rc.window, player.getCamera(), rc.backgroundTexture, player.getPos());
 					drawScreen(rc, wc, player.getCamera());
 					rc.window.draw(darkness);
 					drawMobs(rc, mobs);
@@ -133,6 +152,7 @@ int main()
 				{
 					cycle.pause();
 					rc.window.setView(mapView);
+					background.draw(0.f, rc.window, mapView, rc.backgroundTexture, player.getPos());
 					drawScreen(rc, wc, mapView);
 				}
 			}

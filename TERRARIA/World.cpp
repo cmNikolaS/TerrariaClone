@@ -67,9 +67,9 @@ void generateSurface(Map& map, const std::vector<ui16>& hm)
 				map[y][x] = Block::dirt;
 			else
 				map[y][x] = Block::stone;
-			map[y][0] = map[y][worldW - 1] = Block::clay;
+			map[y][0] = map[y][worldW - 1] = Block::barrier;
 		}
-		map[0][x] = map[worldH - 1][x] = Block::clay;
+		map[0][x] = map[worldH - 1][x] = Block::barrier;
 	}
 }
 void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)

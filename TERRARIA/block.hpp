@@ -65,6 +65,7 @@ struct Block
 		boneBookShelf,
 		bonePlatform,
 		water,
+		barrier,
 
 		BLOCKS_COUNT,
 	};

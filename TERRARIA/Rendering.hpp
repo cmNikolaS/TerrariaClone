@@ -5,7 +5,7 @@
 #include "Hotbar.hpp"
 #include "block.hpp"
 
-void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camera);
+void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera);
 
 const sf::Vector2f getCameraPos(const sf::View& camera);
 

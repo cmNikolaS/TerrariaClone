@@ -33,7 +33,7 @@ void drawMenu(RenderContext& rc)
 	rc.window.draw(options);
 }
 
-void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camera)
+void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 {
 	sf::Vector2f center = camera.getCenter();
 	sf::Vector2f size = camera.getSize();
@@ -44,12 +44,15 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, const sf::View& camer
 	int ex = static_cast<int>((center.x + size.x / 2.f) / tileSize + 1);
 
 	sf::Sprite sprite(rc.blocksAtlas);
-	sprite.setScale({ 1, 1 });
+
 	for (int r = by; r < ey; r++)
 	{
 		for (int c = bx; c < ex; c++)
 		{
-			if (r < 0 || r >= worldH || c < 0 || c >= worldW || wc.map[r][c] == Block::air) continue;
+			if (r < 0 || r >= worldH || c < 0 || c >= worldW || wc.map[r][c] == Block::air)
+			{
+				continue;
+			}
 			int t = wc.map[r][c];
 			sprite.setTextureRect(getBlocksTextures(t));
 			sprite.setPosition({ c * tileSize, r * tileSize });

@@ -12,8 +12,8 @@ private:
 	sf::Sprite sprite;
 	const float gravity = 2200.f;
 	sf::Vector2f velocity = { 0, 0 };
-	float walkingSpeed = 340.f;
-	const sf::Vector2f maxvel = { 400.f, 800.f };
+	float walkingSpeed = 940.f;
+	const sf::Vector2f maxvel = { 940.f, 800.f };
 	float jumpVel = 900;
 	bool jumped = false;
 	bool creativeGoingDown = false;
