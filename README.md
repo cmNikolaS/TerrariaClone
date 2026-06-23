@@ -7,7 +7,7 @@ A 2D sandbox/mining game inspired by Terraria, written in C++17 with SFML 3.
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
 
-<img width="1536" height="800" alt="Screenshot 2026-04-20 22-47-17" src="https://github.com/user-attachments/assets/64df2844-96e8-4fc6-8529-95b3013930d9" />
+<img width="1536" height="800" alt="Screenshot 2026-06-23 21-07-10" src="https://github.com/user-attachments/assets/a89b7cbb-d582-40d9-b4a9-cdd2a4682ee7" />
 
 
 ## Features
