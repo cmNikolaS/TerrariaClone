@@ -23,7 +23,7 @@ A 2D sandbox/mining game inspired by Terraria, written in C++17 with SFML 3.
 - **World map view** — zoom out to see the full world
 - **Restartable worlds** — press R for a fresh seed without relaunching
 
-<img width="1536" height="800" alt="Screenshot 2026-04-20 22-44-51" src="https://github.com/user-attachments/assets/a645147b-f494-4127-af2a-186f5d243922" />
+<img width="1536" height="800" alt="Screenshot 2026-06-24 16-11-19" src="https://github.com/user-attachments/assets/5de6f4a7-7caf-4786-a2e5-098b811b00ec" />
 
 ## Controls
 
