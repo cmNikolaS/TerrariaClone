@@ -2,9 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.hpp"
 
-inline sf::IntRect getBlocksTextures(uint16_t block, uint16_t type = 0, const int w = 32, const int h = 32)
+inline sf::IntRect getAtlasTextures(int block = 0, int type = 0, int w = 32, int h = 32, bool flip = false)
 {
-	return sf::IntRect{ sf::Vector2i(block * w, type * 32),  sf::Vector2i{w, h} };
+	if (!flip)
+		return sf::IntRect{ sf::Vector2i(block * w, type * h), sf::Vector2i{w, h} };
+	else
+		return sf::IntRect{ sf::Vector2i((block + 1) * w, type * h), sf::Vector2i{-w, h} };
 }
 
 void initTextures(RenderContext &rc);

@@ -5,7 +5,7 @@
 #include "Input.hpp"
 #include "block.hpp"
 
-void handlePlayerInput(const sf::Window& window, Player& player, const float dt, bool creative)
+void handlePlayerInput(const sf::Window& window, Player& player, const float dt)
 {
 	if (!window.hasFocus()) return;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
@@ -31,7 +31,7 @@ void handlePlayerInput(const sf::Window& window, Player& player, const float dt,
 		player.increaseVel({ player.getSpeed(), 0 });
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 		player.increaseVel({ -player.getSpeed(), 0 });
-	if (creative == false)
+	if (player.isInCreative() == false)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
 		{
@@ -99,8 +99,8 @@ void handleEvents(sf::RenderWindow& window, Player& player,
 				gs.playerCamera = !gs.playerCamera;
 			else if (key->code == sf::Keyboard::Key::C && gs.playerCamera && mgs == MainGameState::Playing)
 			{
-				gs.creativeMode = !gs.creativeMode;
-				if (gs.creativeMode)
+				player.setIsInCreative(!player.isInCreative());
+				if (player.isInCreative())
 					player.setVelocity({ player.getVelocity().x, 0.f });
 			}
 			else if (key->code == sf::Keyboard::Key::Escape)

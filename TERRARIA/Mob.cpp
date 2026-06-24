@@ -9,6 +9,7 @@
 #include "block.hpp"
 #include <cmath>
 #include "random.hpp"
+#include "textures.hpp"
 
 void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 {
@@ -27,18 +28,27 @@ void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 			return (wc.blocks[(size_t)wc.map[y][x]].solid);
 		};
 	auto checkCollision = [&](float x, float y) -> bool {
-		size_t left = static_cast<size_t>(x / tileSize);
-		size_t right = static_cast<size_t>((x + size.x - 1) / tileSize);
-		size_t down = static_cast<size_t>((y + size.y - 1) / tileSize);
-		size_t top = static_cast<size_t>(y / tileSize);
+		if (x < 0.f || y < 0.f) return true;
 
-		return  isSolid(left, top) ||
-			isSolid(right, top) ||
-			isSolid(left, down) ||
-			isSolid(right, down);
+		size_t startX = static_cast<size_t>(x / tileSize);
+		size_t endX = static_cast<size_t>((x + size.x - 1.f) / tileSize);
+		size_t startY = static_cast<size_t>(y / tileSize);
+		size_t endY = static_cast<size_t>((y + size.y - 1.f) / tileSize);
+
+		for (size_t tileY = startY; tileY <= endY; ++tileY)
+		{
+			for (size_t tileX = startX; tileX <= endX; ++tileX)
+			{
+				if (isSolid(tileX, tileY))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
 		};
 
-	if (c < 15.f)
+	if (c < 15.f && player.isInCreative() == false)
 	{
 		currentState = state::followPlayer;
 	}
@@ -99,7 +109,7 @@ void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 		if (randomPositionToGoTimer <= 0.f)
 		{
 			currentState = state::standStill;
-			standStillTimer = getRandomFloat(rng, 3.5f, 7.f);
+			standStillTimer = getRandomFloat(rng, 1.5f, 3.f);
 			break;
 		}
 
@@ -178,41 +188,38 @@ void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 		break;
 	}
 
-
-
-
-
 	updateDirection();
 }
 
 void Zombie::updateDirection()
 {
-	auto text = sprite.getTexture();
-	auto s = text.getSize();
-	if (velocityX > 0)
-		sprite.setTextureRect({ {0, 0}, {(int)s.x, (int)s.y} });
-	else if (velocityX < 0)
-		sprite.setTextureRect({ {(int)s.x, 0}, {-(int)s.x, (int)s.y} });
+	if (velocityX < 0)
+		sprite.setTextureRect(getAtlasTextures(0, 0, 32, 64, false));
+	else if (velocityX > 0)
+		sprite.setTextureRect(getAtlasTextures(0, 0, 32, 64, true));
 }
 
 void Zombie::draw(sf::RenderWindow& window) const{
+
 	sprite.setPosition(pos);
 	window.draw(sprite);
 }
 
-Zombie::Zombie(sf::Vector2f p, const MobTextures& mobT) : Mob(p, ZombieSize), sprite(mobT.at(static_cast<size_t>(MobId::Zombie)))
+Zombie::Zombie(sf::Vector2f p, const MobTextures& mobT) : Mob(p, ZombieSize), sprite(mobT[MobId::Zombie])
 {
-	const auto texSize = sprite.getTexture().getSize();
-	sprite.setScale({ size.x / texSize.x, size.y / texSize.y });
+	sprite.setTextureRect(getAtlasTextures(0, 0, 32, 64));
+	float idealX = ZombieSize.x / 32;
+	float idealY = ZombieSize.y / 64;
+	sprite.setScale({ idealX , idealY });
 }
 
 void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures,  const float dt, const DayNightCycle &cycle, bool spawn)
 {
-	if (cycle.isItDay())
-	{
-		mobs.clear();
-		return;
-	}
+	//if (cycle.isItDay())
+	//{
+	//	mobs.clear();
+	//	return;
+	//}
 	for (const auto& m : mobs)
 	{
 		m->update(wc, player, dt);

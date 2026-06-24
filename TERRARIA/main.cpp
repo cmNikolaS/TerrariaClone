@@ -65,10 +65,8 @@ int main()
 
 		initTextures(rc);
 		
-		sf::RectangleShape darkness({ (float)WINDOW_W, (float)WINDOW_H });
-		darkness.setFillColor(sf::Color({ 0, 0, 0, darknessLevel }));
-
-		
+		sf::RectangleShape darkness({ (float)worldW * 32, (float)worldH * 32 });
+		darkness.setFillColor(sf::Color({ 19, 24, 98, darknessLevel }));
 
 		//loading player
 		sf::Texture pt;
@@ -131,8 +129,8 @@ int main()
 					handleMouseClicks(rc, wc, player, gc);
 					updateMobs(mobs, wc, player, rc.mobTextures, dt, cycle, spawn);
 					player.setVelocity({ 0.f, player.getVelocity().y });
-					handlePlayerInput(rc.window, player, dt, gs.creativeMode);
-					updatePlayer(player, wc, dt, gs.creativeMode);
+					handlePlayerInput(rc.window, player, dt);
+					updatePlayer(player, wc, dt);
 					
 					updateCamera(player.getCamera(), player.getPos());
 

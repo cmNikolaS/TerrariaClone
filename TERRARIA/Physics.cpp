@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include "block.hpp"
 
-void updatePlayer(Player& player, const WorldContext& wc, const float dt, bool creative)
+void updatePlayer(Player& player, const WorldContext& wc, const float dt)
 {
 	float velY = (player.getVelocity().y);
 	player.setInWater(false);
@@ -16,7 +16,7 @@ void updatePlayer(Player& player, const WorldContext& wc, const float dt, bool c
 		if(velY > 0)
 		velY *= 0.9f;
 	}
-	if (!creative)
+	if (!player.isInCreative())
 	{
 		velY += player.getGravity() * dt;
 	}

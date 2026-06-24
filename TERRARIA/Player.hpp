@@ -20,8 +20,18 @@ private:
 	Hotbar hotbar;
 	sf::View camera;
 	bool inWater = false;
+	bool CREATIVE = false;
 
 public:
+	bool isInCreative() const
+	{
+		return CREATIVE;
+	}
+	void setIsInCreative(bool creative)
+	{
+		CREATIVE = creative;
+	}
+
 	Player(sf::Texture &tex, sf::Vector2f pos, sf::Vector2f size) : text(tex), sprite(text)
 	{
 		//sprite.setOrigin({

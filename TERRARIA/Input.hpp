@@ -4,7 +4,7 @@
 #include "Constants.hpp"
 #include "block.hpp"
 
-void handlePlayerInput(const sf::Window& window, Player& player, const float dt, bool creative);
+void handlePlayerInput(const sf::Window& window, Player& player, const float dt);
 
 bool getMouseLeftClickPos(sf::Vector2i& pos, sf::RenderWindow& window);
 

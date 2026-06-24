@@ -54,7 +54,7 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 				continue;
 			}
 			int t = wc.map[r][c];
-			sprite.setTextureRect(getBlocksTextures(t));
+			sprite.setTextureRect(getAtlasTextures(t));
 			sprite.setPosition({ c * tileSize, r * tileSize });
 			rc.window.draw(sprite);
 		}
@@ -90,7 +90,7 @@ void drawHotbar(RenderContext& rc, Player& player)
 		slot.setOutlineColor(i == player.getHotbar().getSelected() ? sf::Color::White : sf::Color(150, 150, 150));
 		rc.window.draw(slot);
 		//block on slot
-		sf::Sprite bl(rc.blocksAtlas, getBlocksTextures((int)player.getHotbar().getBlockAt(i)));
+		sf::Sprite bl(rc.blocksAtlas, getAtlasTextures((int)player.getHotbar().getBlockAt(i)));
 		bl.setPosition({ slot.getPosition().x + 4.f, slot.getPosition().y + 4.f });
 		bl.setScale({ 1.f, 1.f });
 		rc.window.draw(bl);
