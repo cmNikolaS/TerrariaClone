@@ -45,33 +45,25 @@ void updateCamera(sf::View& camera, sf::Vector2f playerPosition)
 
 int main()
 {
+	RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
+	initTextures(rc);
+	WorldContext wc;
+	initBlocks(wc.blocks);
 	Background background;
 	GameMusic gm;
-	WorldContext wc;
-	sf::Texture blocksAtlas;
-	initBlocks(wc.blocks);
 	gm.loadAll();
-	std::srand(static_cast<unsigned int>(time(0)));
 	MainGameState mgs = MainGameState::Menu;
-	GameState gs = {true, false, true, false};
+	GameState gs;
 	while (gs.restart)
 	{
 		gs.restart = false;
-		wc.map = generateMap();
+		wc.map = generateMap();		
 
-		//background and darkness (for night or contrast)
-		
-		RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
-
-		initTextures(rc);
-		
 		sf::RectangleShape darkness({ (float)worldW * 32, (float)worldH * 32 });
 		darkness.setFillColor(sf::Color({ 19, 24, 98, darknessLevel }));
 
 		//loading player
-		sf::Texture pt;
-		assert(pt.loadFromFile("RESOURCES/Textures/player.png") && "Failed to load player.png");
-		Player player(pt, { playerSpawnPos(wc) }, { playerW, playerH });
+		Player player(rc.playerTexture, { playerSpawnPos(wc) }, { playerW, playerH });
 
 		//CAMERA
 		sf::View playerCamera(sf::FloatRect({ 0.f, 0.f }, { (float)WINDOW_W, (float)WINDOW_H }));

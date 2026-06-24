@@ -10,6 +10,7 @@
 #include <cmath>
 #include "random.hpp"
 #include "textures.hpp"
+#include <random>
 
 void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 {
@@ -215,20 +216,22 @@ Zombie::Zombie(sf::Vector2f p, const MobTextures& mobT) : Mob(p, ZombieSize), sp
 
 void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures,  const float dt, const DayNightCycle &cycle, bool spawn)
 {
-	//if (cycle.isItDay())
-	//{
-	//	mobs.clear();
-	//	return;
-	//}
+	if (cycle.isItDay())
+	{
+		mobs.clear();
+		return;
+	}
+	std::random_device rd;
+	std::mt19937 rng(rd());
 	for (const auto& m : mobs)
 	{
 		m->update(wc, player, dt);
 	}
 	if (!spawn) return;
-	if (rand() % ZombieChance == 1)
+	if (getRandomChance(rng, 1.f/ZombieChance))
 	{
 		float dist = WINDOW_W / 2.f;
-		if (rand() % 2)
+		if (getRandomChance(rng, 0.5f))
 			dist = -dist;
 		sf::Vector2f zp = { player.getPos().x + dist, worldH - maxWorldGenHeight - tileSize*2.f};
 		if (zp.x / tileSize >= worldW - 1 || zp.x / tileSize < 1)return;

@@ -8,15 +8,19 @@
 #include <vector>
 #include <cassert>
 #include "block.hpp"
-
+#include "random.hpp"
+#include <random>
 
 std::vector<ui16> generateHeightMap()
 {
+	std::random_device rd;
+	std::mt19937 rng(rd());
+
 	std::vector<ui16> hm(worldW, averageWorldGenHeight);
 
 	for (ui16 i = 1; i < worldW; i++)
 	{
-		ui16 r = rand() % 11;
+		ui16 r = getRandomInt(rng, 0, 10);
 		ui16 nh = hm[i - 1];
 
 		if (r <= 3)
@@ -40,7 +44,7 @@ std::vector<ui16> generateHeightMap()
 		}
 		else if (r <= 10)
 		{
-			if (rand() % 2) {
+			if (getRandomChance(rng, 0.5f)) {
 				nh += 3;
 			}
 			else nh -= 3;
@@ -74,6 +78,8 @@ void generateSurface(Map& map, const std::vector<ui16>& hm)
 }
 void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 {
+	std::random_device rd;
+	std::mt19937 rng(rd());
 	for (ui16 i = worldH - maxWorldGenHeight; i < worldH; i++)
 	{
 		for (ui16 j = 0; j < worldW; j++)
@@ -98,14 +104,14 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 			}
 			else if (b == Block::stone)
 			{
-				if (rand() % wormChance == 0)
+				if (getRandomChance(rng, 1.f/wormChance))
 				{
 					b = Block::air;
 					worms.push_back({ i, j });
 					continue;
 				}
 				if (i < 1 || i >= worldH - 1 || j < 1 || j >= worldW - 1) continue;
-				ui16 r = rand() % 10000;
+				ui16 r = getRandomInt(rng, 0, 10000);
 				if (r < 9000) continue;
 				if (r < 9400)
 				{
@@ -135,16 +141,16 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 					map[i + 1][j + 1]
 				};
 
-				ui16 chance = 60;
+				float chance = 0.6f;
 
 				for (auto& s : sides)
 				{
 					if (s == Block::stone)
 					{
-						if (rand() % 100 < chance)
+						if (getRandomChance(rng, chance))
 						{
 							s = b;
-							chance -= 10;
+							chance -= 0.1f;
 						}
 						else break;
 					}
@@ -158,10 +164,13 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 
 void doWorm(Map& map, sf::Vector2i worm)
 {
-	bool up = rand() % 2;
-	bool right = rand() % 2;
-	ui16 hor = rand() % 70 + 1;
-	ui16 ver = rand() % 40 + 1;
+	std::random_device rd;
+	std::mt19937 rng(rd());
+
+	bool up = getRandomChance(rng, 0.5f);
+	bool right = getRandomChance(rng, 0.5f);
+	ui16 hor = getRandomInt(rng, 1, 70);
+	ui16 ver = getRandomInt(rng, 1, 40);
 
 	sf::Vector2i np = worm;
 
@@ -187,7 +196,7 @@ void doWorm(Map& map, sf::Vector2i worm)
 		}
 		else
 		{
-			if (rand() % 2)
+			if (getRandomChance(rng, 0.5f))
 			{
 				if (up)
 					np.x--;
@@ -208,7 +217,7 @@ void doWorm(Map& map, sf::Vector2i worm)
 		}
 		if (np.x >= worldH - 2 || np.x < 0 || np.y < 0 || np.y >= worldW - 2 || map[np.x][np.y] != Block::stone) return;
 		map[np.x][np.y] = Block::air;
-		if (np.y < worldW - 2 && np.y - 1 > 0 && rand() % 2)
+		if (np.y < worldW - 2 && np.y - 1 > 0 && getRandomChance(rng, 0.5f))
 			map[np.x][np.y + 1] = Block::air;
 	}
 }

@@ -11,5 +11,3 @@ inline sf::IntRect getAtlasTextures(int block = 0, int type = 0, int w = 32, int
 }
 
 void initTextures(RenderContext &rc);
-
-void loadMobs(MobTextures& text);

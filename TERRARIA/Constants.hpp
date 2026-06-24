@@ -58,6 +58,7 @@ struct RenderContext
 {
 	sf::RenderWindow window;
 	sf::Texture blocksAtlas;
+	sf::Texture playerTexture;
 	sf::Texture backgroundTexture;
 	MobTextures mobTextures;
 	sf::Font font;
@@ -74,7 +75,7 @@ struct WorldContext
 
 struct GameState
 {
-	bool playerCamera = true, creativeMode = false, restart = true, close = false;
+	bool playerCamera = true, restart = true, close = false;
 };
 
 struct GameClocks

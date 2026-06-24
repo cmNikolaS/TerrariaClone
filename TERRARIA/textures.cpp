@@ -7,6 +7,9 @@
 
 void initTextures(RenderContext &rc)
 {
+	//player textures
+	PERMA_ASSERT_MSG(rc.playerTexture.loadFromFile("RESOURCES/Textures/player.png"), "Cant Load Player Textures");
+
 	//font
 	PERMA_ASSERT_MSG(rc.font.openFromFile("RESOURCES/cursyger.ttf"), "Cant Load Font From A File");
 
