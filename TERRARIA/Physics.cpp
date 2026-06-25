@@ -1,7 +1,7 @@
 #pragma once
-#include "Constants.hpp"
-#include "Player.hpp"
-#include "Physics.hpp"
+#include "constants.hpp"
+#include "player.hpp"
+#include "physics.hpp"
 #include <SFML/Graphics.hpp>
 #include "block.hpp"
 

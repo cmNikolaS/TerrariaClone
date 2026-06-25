@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Constants.hpp"
+#include "constants.hpp"
 
 class DayNightCycle
 {

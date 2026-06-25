@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Constants.hpp"
+#include "constants.hpp"
 
 inline sf::IntRect getAtlasTextures(int block = 0, int type = 0, int w = 32, int h = 32, bool flip = false)
 {

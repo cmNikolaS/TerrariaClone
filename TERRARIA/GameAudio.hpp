@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Audio.hpp>
 #include <string>
-#include "Constants.hpp"
+#include "constants.hpp"
 
 struct GameMusic
 {

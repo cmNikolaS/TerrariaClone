@@ -1,7 +1,7 @@
-#include "Mob.hpp"
-#include "Constants.hpp"
-#include "Player.hpp"
-#include "DayNightCycle.hpp"
+#include "mob.hpp"
+#include "constants.hpp"
+#include "player.hpp"
+#include "dayNightCycle.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <memory>

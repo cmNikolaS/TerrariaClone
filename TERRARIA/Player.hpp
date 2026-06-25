@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Constants.hpp"
-#include "Hotbar.hpp"
+#include "constants.hpp"
+#include "hotbar.hpp"
 #include <cmath>
 #include "block.hpp"
 

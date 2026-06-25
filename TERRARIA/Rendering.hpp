@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Constants.hpp"
-#include "Player.hpp"
-#include "Hotbar.hpp"
+#include "constants.hpp"
+#include "player.hpp"
+#include "hotbar.hpp"
 #include "block.hpp"
 
 void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera);

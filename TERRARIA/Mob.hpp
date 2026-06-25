@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Constants.hpp"
-#include "Player.hpp"
-#include "DayNightCycle.hpp"
+#include "constants.hpp"
+#include "player.hpp"
+#include "dayNightCycle.hpp"
 #include <string>
 #include <memory>
 #include <array>

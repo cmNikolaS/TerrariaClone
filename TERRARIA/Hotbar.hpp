@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <array>
-#include "Constants.hpp"
+#include "constants.hpp"
 #include "block.hpp"
 
 struct HotbarSlot

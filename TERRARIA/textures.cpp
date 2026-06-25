@@ -1,8 +1,8 @@
 #include "textures.hpp"
-#include "Constants.hpp"
+#include "constants.hpp"
 #include <SFML/Graphics.hpp>
 #include "permaAssert.hpp"
-#include "Mob.hpp"
+#include "mob.hpp"
 #include <string>
 
 void initTextures(RenderContext &rc)

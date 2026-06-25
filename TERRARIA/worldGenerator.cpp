@@ -1,21 +1,30 @@
-#include "World.hpp"
-#include "Constants.hpp"
+#include "worldGenerator.hpp"
+#include "constants.hpp"
 #include <array>
 #include <cstdint>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <vector>
-#include "thirdparty/FastNoiseSIMD/FastNoiseSIMD.h"
 #include <cassert>
 #include "block.hpp"
 #include "random.hpp"
 #include <random>
+#include <memory>
 
 std::vector<ui16> generateHeightMap()
 {
 	std::random_device rd;
 	std::mt19937 rng(rd());
+
+	int seed = 10;
+
+	//std::unique_ptr<FastNoiseSIMD> heightMapNoiseGen(FastNoiseSIMD::NewFastNoiseSIMD());
+	//heightMapNoiseGen->SetSeed(seed++);
+	
+	//float* heightMapNoiseEmptySet = FastNoiseSIMD::GetEmptySet(worldW);
+
+	//heightMapNoiseGen->FillSimplexFractalSet(heightMapNoiseEmptySet, 0, 0, 0, worldW, 1, 1);
 
 	std::vector<ui16> hm(worldW, averageWorldGenHeight);
 
@@ -54,7 +63,11 @@ std::vector<ui16> generateHeightMap()
 		if (nh > maxWorldGenHeight)nh = maxWorldGenHeight;
 		else if (nh < minimalWorldGenHeight) nh = minimalWorldGenHeight;
 		hm[i] = nh;
+
+		//hm[i] = heightMapNoiseEmptySet[i];
 	}
+	//FastNoiseSIMD::FreeNoiseSet(heightMapNoiseEmptySet);
+
 	return hm;
 }
 void generateSurface(Map& map, const std::vector<ui16>& hm)

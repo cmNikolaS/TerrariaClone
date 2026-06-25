@@ -150,30 +150,30 @@
     <ClCompile Include="blocks.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mob.cpp" />
+    <ClCompile Include="mob.cpp" />
     <ClCompile Include="permaAssert.cpp" />
-    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="physics.cpp" />
     <ClCompile Include="random.cpp" />
-    <ClCompile Include="Rendering.cpp" />
+    <ClCompile Include="rendering.cpp" />
     <ClCompile Include="textures.cpp" />
-    <ClCompile Include="World.cpp" />
+    <ClCompile Include="worldGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="background.hpp" />
     <ClInclude Include="block.hpp" />
-    <ClInclude Include="Constants.hpp" />
-    <ClInclude Include="DayNightCycle.hpp" />
-    <ClInclude Include="GameAudio.hpp" />
-    <ClInclude Include="Hotbar.hpp" />
-    <ClInclude Include="Input.hpp" />
-    <ClInclude Include="Mob.hpp" />
+    <ClInclude Include="constants.hpp" />
+    <ClInclude Include="dayNightCycle.hpp" />
+    <ClInclude Include="gameAudio.hpp" />
+    <ClInclude Include="hotbar.hpp" />
+    <ClInclude Include="input.hpp" />
+    <ClInclude Include="mob.hpp" />
     <ClInclude Include="permaAssert.hpp" />
-    <ClInclude Include="Physics.hpp" />
-    <ClInclude Include="Player.hpp" />
+    <ClInclude Include="physics.hpp" />
+    <ClInclude Include="player.hpp" />
     <ClInclude Include="random.hpp" />
-    <ClInclude Include="Rendering.hpp" />
+    <ClInclude Include="rendering.hpp" />
     <ClInclude Include="textures.hpp" />
-    <ClInclude Include="World.hpp" />
+    <ClInclude Include="worldGenerator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\Users\cmnikolas\Desktop\separate\texture_16px 534.png" />

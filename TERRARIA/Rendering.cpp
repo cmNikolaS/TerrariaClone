@@ -1,9 +1,9 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Rendering.hpp"
-#include "Constants.hpp"
-#include "Player.hpp"
-#include "Hotbar.hpp"
+#include "rendering.hpp"
+#include "constants.hpp"
+#include "player.hpp"
+#include "hotbar.hpp"
 #include <string>
 #include "textures.hpp"
 
