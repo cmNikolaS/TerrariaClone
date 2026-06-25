@@ -43,6 +43,8 @@ void updateCamera(sf::View& camera, sf::Vector2f playerPosition)
 	camera.setCenter(cameraCenter);
 }
 
+sf::Color darknessColor = { 7, 2, 20, darknessLevel };
+
 int main()
 {
 	RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
@@ -60,7 +62,7 @@ int main()
 		wc.map = generateMap();		
 
 		sf::RectangleShape darkness({ (float)worldW * 32, (float)worldH * 32 });
-		darkness.setFillColor(sf::Color({ 19, 24, 98, darknessLevel }));
+		darkness.setFillColor(darknessColor);
 
 		//loading player
 		Player player(rc.playerTexture, { playerSpawnPos(wc) }, { playerW, playerH });
@@ -82,8 +84,6 @@ int main()
 
 		std::vector<std::unique_ptr<Mob>> mobs;
 
-		float timer = 0.f;
-
 		while (rc.window.isOpen())
 		{
 			float dt = gc.dtClock.restart().asSeconds();
@@ -104,38 +104,30 @@ int main()
 			else if (mgs == MainGameState::Playing)
 			{
 				gm.playNow((cycle.isItDay()) ? GameMusic::Track::Day : GameMusic::Track::Night);
-
 				cycle.update(dt);
 				if (gs.playerCamera)
 				{
 					//Cycle
-					bool spawn = false;
 					cycle.unpause();
-					timer += dt;
-					if (timer > 1.f)
-					{
-						timer = 0.f;
-						spawn = true;
-					}
 					//Handle input
 					handleMouseClicks(rc, wc, player, gc);
-					updateMobs(mobs, wc, player, rc.mobTextures, dt, cycle, spawn);
+					updateMobs(mobs, wc, player, rc.mobTextures, dt, cycle);
 					player.setVelocity({ 0.f, player.getVelocity().y });
 					handlePlayerInput(rc.window, player, dt);
 					updatePlayer(player, wc, dt);
-					
 					updateCamera(player.getCamera(), player.getPos());
 
 					//View
 					rc.window.setView(player.getCamera());
-					updateDarkness(darkness, cycle);
-					
+					darkness.setFillColor(updateDarknessColor(darknessColor, cycle));
+
+
 					//Drawing
 					background.draw(dt, rc.window, player.getCamera(), rc.backgroundTexture, player.getPos());
 					drawScreen(rc, wc, player.getCamera());
-					rc.window.draw(darkness);
 					drawMobs(rc, mobs);
 					player.draw(rc.window);
+					rc.window.draw(darkness);
 					drawGameUI(rc, player);
 				}
 				else

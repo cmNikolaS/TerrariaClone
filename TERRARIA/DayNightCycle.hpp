@@ -34,8 +34,9 @@ public:
 	}
 };
 
-inline void updateDarkness(sf::RectangleShape& darkness, const DayNightCycle& cycle)
+inline sf::Color updateDarknessColor(sf::Color color, const DayNightCycle& cycle)
 {
-	ui8 alpha = static_cast<ui8>(((1.f + std::sin(cycle.getDayTime() / cycle.getDayLength() * PI * 2.f)) / 2.f * 220));
-	darkness.setFillColor({ 0, 0, 0, alpha });
+	ui8 alpha = static_cast<ui8>(((1.f + std::sin(cycle.getDayTime() / cycle.getDayLength() * PI * 2.f)) / 2.f)*230);
+	color.a = alpha;
+	return color;
 }

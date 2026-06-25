@@ -65,4 +65,4 @@ public:
 };
 
 void drawMobs(RenderContext& rc, const std::vector<std::unique_ptr<Mob>>& mobs);
-void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures ,const float dt, const DayNightCycle& cycle, bool spawn);
+void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures ,const float dt, const DayNightCycle& cycle);

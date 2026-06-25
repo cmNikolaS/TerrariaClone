@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <unordered_map>
 #include <vector>
+#include "thirdparty/FastNoiseSIMD/FastNoiseSIMD.h"
 #include <cassert>
 #include "block.hpp"
 #include "random.hpp"

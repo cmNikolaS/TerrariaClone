@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 #include "block.hpp"
 
+extern float mobSpawnTimer;
+
 constexpr float PI = 3.14159265f;
 constexpr float DAY_LENGTH = 60.f;
 

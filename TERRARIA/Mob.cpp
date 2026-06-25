@@ -12,6 +12,8 @@
 #include "textures.hpp"
 #include <random>
 
+float mobSpawnTimer = 1.f;
+
 void Zombie::update(WorldContext& wc, const Player& player, const float dt)
 {
 	auto pp = player.getPos();
@@ -214,7 +216,7 @@ Zombie::Zombie(sf::Vector2f p, const MobTextures& mobT) : Mob(p, ZombieSize), sp
 	sprite.setScale({ idealX , idealY });
 }
 
-void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures,  const float dt, const DayNightCycle &cycle, bool spawn)
+void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const Player& player, const MobTextures &mobTextures,  const float dt, const DayNightCycle &cycle)
 {
 	if (cycle.isItDay())
 	{
@@ -223,6 +225,15 @@ void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const
 	}
 	std::random_device rd;
 	std::mt19937 rng(rd());
+
+	bool spawn = false;
+	mobSpawnTimer -= dt;
+	if (mobSpawnTimer <= 0)
+	{
+		mobSpawnTimer = getRandomFloat(rng, 0.6f, 1.5f);
+		spawn = true;
+	}
+
 	for (const auto& m : mobs)
 	{
 		m->update(wc, player, dt);
