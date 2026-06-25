@@ -79,6 +79,15 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 	int coldBH = worldH - coldBiomHeight;
 	std::random_device rd;
 	std::mt19937 rng(rd());
+
+	std::unique_ptr<FastNoiseSIMD> caveNoiseGenerator(FastNoiseSIMD::NewFastNoiseSIMD());
+	caveNoiseGenerator->SetFrequency(0.05f);
+	caveNoiseGenerator->SetFractalOctaves(0);
+	caveNoiseGenerator->SetSeed(getRandomInt(rng, 1, 100000));
+	float* caveNoise = FastNoiseSIMD::GetEmptySet(worldH*worldW);
+	caveNoiseGenerator->FillPerlinFractalSet(caveNoise, 0, 0, 0, worldW, worldH, 1);
+	
+	
 	for (ui16 i = 0; i < worldH; i++)
 	{
 		for (ui16 j = 0; j < worldW; j++)
@@ -88,7 +97,7 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 			if (b == Block::air)
 			{
 				ui16 d = worldH - i;
-				if (d <= waterH  && waterH != minWH)
+				if (d <= waterH && waterH != minWH)
 				{
 					b = Block::water;
 				}
@@ -105,64 +114,23 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 			{
 				b = Block::snow;
 			}
-			else if (b == Block::stone)
+			else if (b == Block::stone || b == Block::dirt || b == Block::grassBlock && getRandomChance(rng,0.5f))
 			{
-				if (getRandomChance(rng, 1.f/wormChance))
+				if (std::abs(caveNoise[j * worldH + i]) > 0.25f)
+					b = Block::air;
+				if (getRandomChance(rng, 1.f / wormChance))
 				{
 					b = Block::air;
 					worms.push_back({ i, j });
 					continue;
 				}
-				if (i < 1 || i >= worldH - 1 || j < 1 || j >= worldW - 1) continue;
-				ui16 r = getRandomInt(rng, 0, 10000);
-				if (r < 9000) continue;
-				if (r < 9400)
-				{
-					b = Block::air;
-				}
-				else if (r < 9700)
-				{
-					b = Block::iron;
-				}
-				else if (r < 9900)
-				{
-					b = Block::gold;
-				}
-				else
-				{
-					b = Block::rubyBlock;
-				}
-				if (b == Block::stone) continue;
-				std::array<int, 8> sides{
-					map[i - 1][j],
-					map[i + 1][j],
-					map[i][j - 1],
-					map[i][j + 1],
-					map[i - 1][j - 1],
-					map[i - 1][j + 1],
-					map[i + 1][j - 1],
-					map[i + 1][j + 1]
-				};
-
-				float chance = 0.6f;
-
-				for (auto& s : sides)
-				{
-					if (s == Block::stone)
-					{
-						if (getRandomChance(rng, chance))
-						{
-							s = b;
-							chance -= 0.1f;
-						}
-						else break;
-					}
-				}
-
 			}
 			map[i][j] = b;
 		}
 	}
+
+	FastNoiseSIMD::FreeNoiseSet(caveNoise);
+
 }
 
 void doWorm(Map& map, sf::Vector2i worm)
@@ -220,7 +188,7 @@ void doWorm(Map& map, sf::Vector2i worm)
 		}
 		if (np.x >= worldH - 2 || np.x < 0 || np.y < 0 || np.y >= worldW - 2 || map[np.x][np.y] != Block::stone) return;
 		map[np.x][np.y] = Block::air;
-		if (np.y < worldW - 2 && np.y - 1 > 0 && getRandomChance(rng, 0.5f))
+		if (np.y < worldW - 2 && np.y - 1 > 0 && getRandomChance(rng, 1.f))
 			map[np.x][np.y + 1] = Block::air;
 	}
 }
