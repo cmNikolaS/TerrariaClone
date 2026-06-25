@@ -238,17 +238,22 @@ void updateMobs(std::vector<std::unique_ptr<Mob>>& mobs, WorldContext& wc, const
 	{
 		m->update(wc, player, dt);
 	}
+
+	int maxWH = worldH - maxWorldGenHeight;
+	maxWH *= 32;
+
 	if (!spawn) return;
 	if (getRandomChance(rng, 1.f/ZombieChance))
 	{
 		float dist = WINDOW_W / 2.f;
 		if (getRandomChance(rng, 0.5f))
 			dist = -dist;
-		sf::Vector2f zp = { player.getPos().x + dist, worldH - maxWorldGenHeight - tileSize*2.f};
-		if (zp.x / tileSize >= worldW - 1 || zp.x / tileSize < 1)return;
-		while (zp.y+=tileSize)
+		sf::Vector2f zp = { player.getPos().x + dist, maxWH - tileSize*2.f};
+		if (zp.x / tileSize >= worldW - 1 || zp.x / tileSize < 1 || zp.x / tileSize >= worldW)return;
+		while (zp.y += tileSize)
 		{
-			if (zp.y / tileSize >= worldH) return;
+			if (zp.y < 0.f) return;
+			if (zp.y / tileSize + 1 >= worldH) return;
 			if (wc.map[(size_t)zp.y / tileSize + 1][(size_t)zp.x / tileSize] != Block::air) break;
 		}
 		zp.y-=tileSize*3.f;

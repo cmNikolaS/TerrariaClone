@@ -20,7 +20,7 @@ constexpr ui8 NUM_OF_SLOTS_ = 9;
 constexpr float SLOT_SIZE_ = 40.f;
 constexpr float SLOT_PADDING_ = 4.f;
 
-constexpr ui8 sd = 8;
+constexpr ui8 sd = 3;
 
 const std::string window_title = "Terraria";
 inline ui16 WINDOW_W = 1536;
@@ -38,11 +38,11 @@ constexpr float playerH = 84.f;
 constexpr ui16 wormChance = 120; // 1 / wormChance
 constexpr ui16 ZombieChance = 3;
 
-constexpr ui16 maxWorldGenHeight = 740 / sd;
+constexpr ui16 maxWorldGenHeight = 950 / sd;
 constexpr ui16 averageWorldGenHeight = 590 / sd;
 constexpr ui16 minimalWorldGenHeight = 500 / sd;
-constexpr ui16 waterGenHeight = 590 / sd;
-constexpr ui16 coldBiomHeight = 700 / sd;
+constexpr ui16 waterGenHeight = 550 / sd;
+constexpr ui16 coldBiomHeight = 750 / sd;
 
 constexpr float leftMouseClickCooldown = 0.15f;
 constexpr float rightMouseClickCooldown = 0.1f;

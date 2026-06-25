@@ -11,62 +11,44 @@
 #include "random.hpp"
 #include <random>
 #include <memory>
+#include "FastNoiseSIMD.h"
 
 std::vector<ui16> generateHeightMap()
 {
 	std::random_device rd;
 	std::mt19937 rng(rd());
 
-	int seed = 10;
+	std::unique_ptr<FastNoiseSIMD> heightMapNoiseGen(FastNoiseSIMD::NewFastNoiseSIMD());
+	heightMapNoiseGen->SetFrequency(0.0025f);
+	heightMapNoiseGen->SetFractalOctaves(6);
+	heightMapNoiseGen->SetFractalLacunarity(2.0f);
+	heightMapNoiseGen->SetFractalGain(0.45f);
+	heightMapNoiseGen->SetSeed(getRandomInt(rng, 1, 1000000));
 
-	//std::unique_ptr<FastNoiseSIMD> heightMapNoiseGen(FastNoiseSIMD::NewFastNoiseSIMD());
-	//heightMapNoiseGen->SetSeed(seed++);
-	
-	//float* heightMapNoiseEmptySet = FastNoiseSIMD::GetEmptySet(worldW);
 
-	//heightMapNoiseGen->FillSimplexFractalSet(heightMapNoiseEmptySet, 0, 0, 0, worldW, 1, 1);
+	float* heightMapNoise = FastNoiseSIMD::GetEmptySet(worldW);
+
+	heightMapNoiseGen->FillSimplexFractalSet(heightMapNoise, 0, 0, 0, worldW, 1, 1);
+
 
 	std::vector<ui16> hm(worldW, averageWorldGenHeight);
+	std::unique_ptr<FastNoiseSIMD> macroGen(FastNoiseSIMD::NewFastNoiseSIMD());
+	macroGen->SetSeed(getRandomInt(rng, 1, 1000000));
+	macroGen->SetFrequency(0.0008f);
+	macroGen->SetFractalOctaves(2);
+	float* macroNoise = FastNoiseSIMD::GetEmptySet(worldW);
+	macroGen->FillPerlinFractalSet(macroNoise, 0, 0, 0, worldW, 1, 1);
 
 	for (ui16 i = 1; i < worldW; i++)
 	{
-		ui16 r = getRandomInt(rng, 0, 10);
-		ui16 nh = hm[i - 1];
+		int minWH = worldH - minimalWorldGenHeight;
+		int maxWH = worldH - maxWorldGenHeight;
 
-		if (r <= 3)
-		{
-		}
-		else if (r <= 5)
-		{
-			nh += 1;
-		}
-		else if (r <= 6)
-		{
-			nh += 2;
-		}
-		else if (r <= 8)
-		{
-			nh -= 1;
-		}
-		else if (r <= 9)
-		{
-			nh -= 2;
-		}
-		else if (r <= 10)
-		{
-			if (getRandomChance(rng, 0.5f)) {
-				nh += 3;
-			}
-			else nh -= 3;
-		}
-
-		if (nh > maxWorldGenHeight)nh = maxWorldGenHeight;
-		else if (nh < minimalWorldGenHeight) nh = minimalWorldGenHeight;
-		hm[i] = nh;
-
-		//hm[i] = heightMapNoiseEmptySet[i];
+		float n = 0.76f * heightMapNoise[i] + 0.24f * macroNoise[i];
+		hm[i] = minWH + n * (maxWH - minWH);
 	}
-	//FastNoiseSIMD::FreeNoiseSet(heightMapNoiseEmptySet);
+	FastNoiseSIMD::FreeNoiseSet(macroNoise);
+	FastNoiseSIMD::FreeNoiseSet(heightMapNoise);
 
 	return hm;
 }
@@ -81,7 +63,7 @@ void generateSurface(Map& map, const std::vector<ui16>& hm)
 				map[y][x] = Block::air;
 			else if (y == surf)
 				map[y][x] = Block::grassBlock;
-			else if (y < surf + 3)
+			else if (y < surf + 14)
 				map[y][x] = Block::dirt;
 			else
 				map[y][x] = Block::stone;
@@ -92,9 +74,12 @@ void generateSurface(Map& map, const std::vector<ui16>& hm)
 }
 void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 {
+	int minWH = worldH - minimalWorldGenHeight;
+	int waterH = worldH - waterGenHeight;
+	int coldBH = worldH - coldBiomHeight;
 	std::random_device rd;
 	std::mt19937 rng(rd());
-	for (ui16 i = worldH - maxWorldGenHeight; i < worldH; i++)
+	for (ui16 i = 0; i < worldH; i++)
 	{
 		for (ui16 j = 0; j < worldW; j++)
 		{
@@ -103,16 +88,20 @@ void generateSubsurface(Map& map, std::vector<sf::Vector2i>& worms)
 			if (b == Block::air)
 			{
 				ui16 d = worldH - i;
-				if (d >= minimalWorldGenHeight && d <= waterGenHeight)
+				if (d <= waterH  && waterH != minWH)
 				{
 					b = Block::water;
 				}
 			}
-			else if (b == Block::grassBlock && i < (worldH - coldBiomHeight))
+			else if (b == Block::grassBlock && i <= ( coldBH))
 			{
 				b = Block::snow;
 			}
-			else if (b == Block::dirt && i < (worldH - coldBiomHeight))
+			else if (b == Block::dirt && i <= ( coldBH))
+			{
+				b = Block::snow;
+			}
+			else if (b == Block::stone && i <= ( coldBH))
 			{
 				b = Block::snow;
 			}

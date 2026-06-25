@@ -14,6 +14,7 @@ add_executable(TERRARIA ${SOURCES})
 
 target_include_directories(TERRARIA PRIVATE
     ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/thirdparty/FastNoiseSIMD
 )
 
 set(SFML_DIR "C:/SFML/lib/cmake/SFML")
@@ -25,12 +26,29 @@ find_package(SFML CONFIG REQUIRED COMPONENTS
     Audio
 )
 
+add_library(FastNoiseSIMD STATIC
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD.cpp
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_avx2.cpp
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_avx512.cpp
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_sse41.cpp
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_sse2.cpp
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_internal.cpp
+)
+
+
 target_link_libraries(TERRARIA PRIVATE
+    FastNoiseSIMD
     SFML::Graphics
     SFML::Window
     SFML::System
     SFML::Audio
 )
+
+set_source_files_properties(
+    thirdparty/FastNoiseSIMD/FastNoiseSIMD_avx2.cpp
+    PROPERTIES COMPILE_FLAGS /arch:AVX2
+)
+
 if (WIN32)
     add_custom_command(TARGET TERRARIA POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory

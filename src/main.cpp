@@ -83,6 +83,7 @@ int main()
 		DayNightCycle cycle;
 
 		std::vector<std::unique_ptr<Mob>> mobs;
+		mobs.resize(100);
 
 		while (rc.window.isOpen())
 		{
@@ -134,7 +135,7 @@ int main()
 				{
 					cycle.pause();
 					rc.window.setView(mapView);
-					background.draw(0.f, rc.window, mapView, rc.backgroundTexture, player.getPos());
+					//background.draw(0.f, rc.window, mapView, rc.backgroundTexture, player.getPos());
 					drawScreen(rc, wc, mapView);
 				}
 			}
