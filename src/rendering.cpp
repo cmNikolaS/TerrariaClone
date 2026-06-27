@@ -6,6 +6,7 @@
 #include "hotbar.hpp"
 #include <string>
 #include "textures.hpp"
+#include <cmath>
 
 void drawMenu(RenderContext& rc)
 {
@@ -35,6 +36,11 @@ void drawMenu(RenderContext& rc)
 
 void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 {
+	sf::Vector2f originalCenter = camera.getCenter();
+	
+	camera.setCenter({ std::round(originalCenter.x), std::round(originalCenter.y) });
+	rc.window.setView(camera);
+
 	sf::Vector2f center = camera.getCenter();
 	sf::Vector2f size = camera.getSize();
 
@@ -59,6 +65,8 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 			rc.window.draw(sprite);
 		}
 	}
+	camera.setCenter(originalCenter);
+	rc.window.setView(camera);
 }
 
 void drawCoordinates(RenderContext& rc, Player& player)
