@@ -65,6 +65,7 @@ struct RenderContext
 	sf::Texture hearts;
 	MobTextures mobTextures;
 	sf::Font font;
+	bool insideInventory = false;
 	RenderContext(sf::VideoMode vm, const std::string& title) : window(vm, title)
 	{
 	}
@@ -93,3 +94,9 @@ inline const sf::Vector2f getCameraPos(const sf::View& camera)
 {
 	return  sf::Vector2f({ camera.getCenter().x - camera.getSize().x / 2.f, camera.getCenter().y - camera.getSize().y / 2.f });
 }
+
+struct InventoryClickState
+{
+	bool leftWasDown = false;
+	bool rightWasDown = false;
+};

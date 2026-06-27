@@ -3,7 +3,7 @@
 #include "rendering.hpp"
 #include "constants.hpp"
 #include "player.hpp"
-#include "hotbar.hpp"
+#include "inventory.hpp"
 #include <string>
 #include "textures.hpp"
 #include <cmath>
@@ -69,38 +69,6 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 	rc.window.setView(camera);
 }
 
-void drawHotbar(RenderContext& rc, Player& player)
-{
-	const float total = Hotbar::SLOTS * (Hotbar::SLOT_SIZE + Hotbar::PADDING) - Hotbar::PADDING;
-	sf::Vector2f camPos = getCameraPos(player.getCamera());
-	sf::Vector2f camSize = player.getCamera().getSize();
-
-	float startX = camPos.x + (camSize.x - total) / 2.f;
-	float startY = camPos.y + camSize.y - Hotbar::SLOT_SIZE - 10.f;
-
-	for (ui16 i = 0; i < Hotbar::SLOTS; i++)
-	{
-		float x = startX + i * (Hotbar::SLOT_SIZE + Hotbar::PADDING);
-		//slot
-		sf::RectangleShape slot({ Hotbar::SLOT_SIZE, Hotbar::SLOT_SIZE });
-		slot.setPosition({ x, startY });
-		slot.setFillColor(sf::Color(50, 50, 50, 180));
-		slot.setOutlineThickness(i == player.getHotbar().getSelected() ? 2.f : 1.f);
-		slot.setOutlineColor(i == player.getHotbar().getSelected() ? sf::Color::White : sf::Color(150, 150, 150));
-		rc.window.draw(slot);
-		//block on slot
-		sf::Sprite bl(rc.blocksAtlas, getAtlasTextures((int)player.getHotbar().getBlockAt(i)));
-		bl.setPosition({ slot.getPosition().x + 4.f, slot.getPosition().y + 4.f });
-		bl.setScale({ 1.f, 1.f });
-		rc.window.draw(bl);
-		//num of slot
-		sf::Text num(rc.font, std::to_string(i + 1), 10);
-		num.setPosition({ x + 2.f, startY + 2.f });
-		num.setFillColor(sf::Color(200, 200, 200));
-		rc.window.draw(num);
-	}
-}
-
 void drawFPS(RenderContext& rc)
 {
 
@@ -114,7 +82,6 @@ void drawCoordinates(RenderContext& rc, Player& player)
 	text.setPosition({ pos.x + 20, pos.y + 20 });
 	rc.window.draw(text);
 }
-
 
 void drawHearts(RenderContext& rc, Player& player)
 {
@@ -142,6 +109,70 @@ void drawHearts(RenderContext& rc, Player& player)
 	}
 }
 
+void drawInventory(RenderContext& rc, Player& player)
+{
+	auto oldView = rc.window.getView();
+	rc.window.setView(rc.window.getDefaultView());
+
+	auto& invLayout = player.getInventoryLayout();
+	auto& inv = player.getInventory();
+	
+	invLayout.build(rc.window.getSize(), true);
+
+	sf::Sprite itemSprite(rc.blocksAtlas);
+
+	float scale = invLayout.slotSize / static_cast<float>(tileSize);
+	
+	int c = 0;
+
+	for (auto &slot : invLayout.slots)
+	{
+		if (!rc.insideInventory && c >= Inventory::HOTBAR) break;
+		c++;
+		sf::RectangleShape sl(slot.rect.size);
+		sl.setPosition(slot.rect.position);
+		sl.setFillColor({20, 140, 120, 130});
+		rc.window.draw(sl);
+
+		ItemStack& stack = inv.slots[slot.inventoryIndex];
+		if (stack.item != Item::none && stack.count > 0)
+		{
+			itemSprite.setTextureRect(getAtlasTextures(stack.item, 4));
+			itemSprite.setScale({ scale, scale });
+			itemSprite.setPosition(slot.rect.position);
+			rc.window.draw(itemSprite);
+			
+			if (stack.count > 1)
+			{
+				sf::Text countText(rc.font, std::to_string(stack.count), 12);
+				countText.setFillColor(sf::Color::White);
+				countText.setPosition({ slot.rect.position.x, slot.rect.position.y });
+				rc.window.draw(countText);
+			}
+
+		}
+	}
+
+	ItemStack& held = player.getItemOnHold();
+	if (held.item != Item::none)
+	{
+		sf::Vector2i mousePos = sf::Mouse::getPosition(rc.window);
+		sf::Sprite heldIcon(rc.blocksAtlas);
+		heldIcon.setTextureRect(getAtlasTextures(held.item));
+		heldIcon.setPosition({ static_cast<float>(mousePos.x) - 20.f, static_cast<float>(mousePos.y) - 20.f });
+		rc.window.draw(heldIcon);
+		if (held.count > 1)
+		{
+			sf::Text countText(rc.font, std::to_string(held.count), 12);
+			countText.setFillColor(sf::Color::White);
+			countText.setPosition(heldIcon.getPosition());
+			rc.window.draw(countText);
+		}
+	}
+
+	rc.window.setView(oldView);
+}
+
 void drawGameUI(RenderContext& rc, Player& player)
 {
 	//coordinates
@@ -150,9 +181,8 @@ void drawGameUI(RenderContext& rc, Player& player)
 	//fps
 	drawFPS(rc);
 
-	//hotbar
-	drawHotbar(rc, player);
-
 	//hearts
 	drawHearts(rc, player);
+
+	drawInventory(rc, player);
 }

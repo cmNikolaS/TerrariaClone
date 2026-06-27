@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <array>
-#include "hotbar.hpp"
+#include "inventory.hpp"
 #include "player.hpp"
 #include "constants.hpp"
 #include "worldGenerator.hpp"
@@ -47,6 +47,7 @@ sf::Color darknessColor = { 7, 2, 20, darknessLevel };
 
 int main()
 {
+	InventoryClickState clickState;
 	RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
 	initTextures(rc);
 	WorldContext wc;
@@ -66,6 +67,13 @@ int main()
 
 		//loading player
 		Player player(rc.playerTexture, { playerSpawnPos(wc) }, { playerW, playerH });
+
+		auto &inv = player.getInventory();
+
+		inv.slots[0] = ItemStack(Item::dirt, 64);
+		inv.slots[1] = ItemStack(Item::grassBlock, 64);
+		inv.slots[2] = ItemStack(Item::stone, 64);
+
 
 		//CAMERA
 		sf::View playerCamera(sf::FloatRect({ 0.f, 0.f }, { (float)WINDOW_W, (float)WINDOW_H }));
@@ -88,7 +96,7 @@ int main()
 		while (rc.window.isOpen())
 		{
 			float dt = gc.dtClock.restart().asSeconds();
-			handleEvents(rc.window, player, gc.scrollPress, gs, mgs);
+			handleEvents(rc, player, gc.scrollPress, gs, mgs);
 			if (gs.restart) break;
 			if (gs.close) rc.window.close();
 
@@ -111,6 +119,9 @@ int main()
 					//Cycle
 					cycle.unpause();
 					//Handle input
+					bool wasUIClicked = false;
+					handleInventoryInput(rc, player, clickState, wasUIClicked);
+					if(!wasUIClicked)
 					handleMouseClicks(rc, wc, player, gc);
 					updateMobs(mobs, wc, player, rc.mobTextures, dt, cycle);
 					player.setVelocity({ 0.f, player.getVelocity().y });

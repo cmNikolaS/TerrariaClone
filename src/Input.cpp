@@ -5,27 +5,27 @@
 #include "input.hpp"
 #include "block.hpp"
 
-void handlePlayerInput(const sf::Window& window, Player& player, const float dt)
+void handlePlayerInput(const sf::Window &window, Player& player, const float dt)
 {
 	if (!window.hasFocus()) return;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
-		player.getHotbar().setSelected(0);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2))
-		player.getHotbar().setSelected(1);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3))
-		player.getHotbar().setSelected(2);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4))
-		player.getHotbar().setSelected(3);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5))
-		player.getHotbar().setSelected(4);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6))
-		player.getHotbar().setSelected(5);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7))
-		player.getHotbar().setSelected(6);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8))
-		player.getHotbar().setSelected(7);
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9))
-		player.getHotbar().setSelected(8);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1))
+	//	player.getHotbar().setSelected(0);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2))
+	//	player.getHotbar().setSelected(1);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3))
+	//	player.getHotbar().setSelected(2);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4))
+	//	player.getHotbar().setSelected(3);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5))
+	//	player.getHotbar().setSelected(4);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6))
+	//	player.getHotbar().setSelected(5);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7))
+	//	player.getHotbar().setSelected(6);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8))
+	//	player.getHotbar().setSelected(7);
+	//if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9))
+	//	player.getHotbar().setSelected(8);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
 		player.increaseVel({ player.getSpeed(), 0 });
@@ -77,21 +77,120 @@ bool getMouseRightClickPos(sf::Vector2i& pos, sf::RenderWindow& window)
 	return false;
 }
 
-void handleEvents(sf::RenderWindow& window, Player& player,
+void handleInventoryInput(RenderContext& rc, Player& player, InventoryClickState &clickState, bool& wasUIClicked)
+{
+	wasUIClicked = false;
+	if (!rc.window.hasFocus()) return;
+	
+	bool leftDown = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+	bool rightDown = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
+
+	bool leftClicked = leftDown && !clickState.leftWasDown;
+	bool rightClicked = rightDown && !clickState.rightWasDown;
+	
+	clickState.leftWasDown = leftDown;
+	clickState.rightWasDown = rightDown;
+
+	sf::Vector2i mousePixel = sf::Mouse::getPosition(rc.window);
+	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, rc.window.getDefaultView());
+
+	InventoryLayout& layout = player.getInventoryLayout();
+	Inventory& inventory = player.getInventory();
+
+	slotUI* hoveredSlot = nullptr;
+
+	int c = 0;
+	for (slotUI& slot : layout.slots)
+	{
+		if (!rc.insideInventory && c >= Inventory::HOTBAR) return;
+		c++;
+		if (slot.rect.contains(mousePos))
+		{
+			hoveredSlot = &slot;
+			break;
+		}
+	}
+	
+	wasUIClicked = (hoveredSlot != nullptr);
+	
+	if (!hoveredSlot || (!leftClicked && !rightClicked)) return;
+
+	ItemStack& clicked = inventory.slots[hoveredSlot->inventoryIndex];
+	auto &held = player.getItemOnHold();
+
+	if (leftClicked)
+	{
+		if (held.item == Item::none)
+			{
+				held = clicked;
+				clicked = ItemStack{};
+			}
+			else if (clicked.item == Item::none)
+			{
+				clicked = held;
+				held = ItemStack{};
+			}
+			else if (clicked.item == held.item)
+			{
+				ui8 space = held.stackSize - clicked.count;
+				ui8 move = std::min(space, held.count);
+				clicked.count += move;
+				held.count -= move;
+				if (held.count == 0)
+					held = ItemStack{};
+			}
+			else
+			{
+				ItemStack temp = clicked;
+				clicked = held;
+				held = temp;
+			}
+		}
+		else
+		{
+			if (held.item == Item::none && clicked.count > 0)
+			{
+				ui8 takeAmount = (clicked.count + 1) / 2;
+				held = clicked;
+				held.count = takeAmount;
+				clicked.count -= takeAmount;
+				if (clicked.count == 0)
+					clicked = ItemStack{};
+			}
+			else if (held.item != Item::none && (clicked.item == Item::none || clicked.item == held.item))
+			{
+				if (clicked.item == Item::none)
+				{
+					clicked.item = held.item;
+					clicked.stackSize = held.stackSize;
+				}
+				if (clicked.count < clicked.stackSize)
+				{
+					clicked.count += 1;
+					held.count -= 1;
+					if (held.count == 0)
+						held = ItemStack{};
+				}
+			}
+		}
+}
+
+
+void handleEvents(RenderContext &rc, Player& player,
 	sf::Clock& scrollPress, GameState& gs, MainGameState& mgs)
 {
-	if (window.hasFocus())
+	if (rc.window.hasFocus())
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R))
 			gs.restart = true;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Q))
 			gs.close = true;
 	}
-	while (std::optional event = window.pollEvent())
+	while (std::optional event = rc.window.pollEvent())
 	{
-		if (!window.hasFocus()) continue;
+		if (!rc.window.hasFocus()) continue;
 		if (event->is<sf::Event::Closed>())
-			window.close();
+			rc.window.close();
 
 		if (auto key = event->getIf<sf::Event::KeyPressed>())
 		{
@@ -110,6 +209,10 @@ void handleEvents(sf::RenderWindow& window, Player& player,
 				else
 					mgs = MainGameState::Menu;
 			}
+			else if (key->code == sf::Keyboard::Key::Tab)
+			{
+				rc.insideInventory = !rc.insideInventory;
+			}
 		}
 
 		if (auto scroll = event->getIf<sf::Event::MouseWheelScrolled>())
@@ -118,10 +221,10 @@ void handleEvents(sf::RenderWindow& window, Player& player,
 			scrollPress.restart();
 			if (gs.playerCamera)
 			{
-				if (scroll->delta > 0)
-					player.getHotbar().scrollDown();
-				else
-					player.getHotbar().scrollUp();
+				//if (scroll->delta > 0)
+					//player.getHotbar().scrollDown();
+				//else
+					//player.getHotbar().scrollUp();
 			}
 		}
 	}
@@ -130,6 +233,9 @@ void handleMouseClicks(RenderContext& rc, WorldContext& wc, Player& player, Game
 {
 	if (!rc.window.hasFocus()) return;
 	sf::Vector2i clickPos = {0, 0};
+	
+	
+	
 	if (getMouseLeftClickPos(clickPos, rc.window) && gc.leftClickPress.getElapsedTime().asSeconds() > leftMouseClickCooldown)
 	{
 		gc.leftClickPress.restart();
@@ -149,27 +255,26 @@ void handleMouseClicks(RenderContext& rc, WorldContext& wc, Player& player, Game
 		int tileY = static_cast<int>(pos.y / tileSize);
 		if (tileX >= 0 && tileX < worldW && tileY >= 0 && tileY < worldH)
 		{
-			wc.map[tileY][tileX] = player.getHotbar().getSelectedBlock();
+			//wc.map[tileY][tileX] = player.getHotbar().getSelectedBlock();
 		}
 	}
 
 	sf::Vector2f camPos = getCameraPos(player.getCamera());
 	sf::Vector2f camSize = player.getCamera().getSize();
 
-	float total = Hotbar::SLOTS * (Hotbar::SLOT_SIZE + Hotbar::PADDING) - Hotbar::PADDING;
-	float startX = camPos.x + (camSize.x - total) / 2.f;
-	float startY = camPos.y + camSize.y - Hotbar::SLOT_SIZE - 10.f;
-	
-	auto worldPos = rc.window.mapPixelToCoords(clickPos, player.getCamera());
-	
-	for (ui8 i = 0; i < Hotbar::SLOTS; i++)
-	{
-		float x = startX + i * (Hotbar::SLOT_SIZE + Hotbar::PADDING);
-		if (worldPos.x >= x && worldPos.x < x + Hotbar::SLOT_SIZE && worldPos.y >= startY && worldPos.y < startY + Hotbar::SLOT_SIZE)
-		{
-			player.getHotbar().setSelected(i);
-			break;
-		}
-	}
-
+	//float total = Hotbar::SLOTS * (Hotbar::SLOT_SIZE + Hotbar::PADDING) - Hotbar::PADDING;
+	//float startX = camPos.x + (camSize.x - total) / 2.f;
+	//float startY = camPos.y + camSize.y - Hotbar::SLOT_SIZE - 10.f;
+	//
+	//auto worldPos = rc.window.mapPixelToCoords(clickPos, player.getCamera());
+	//
+	//for (ui8 i = 0; i < Hotbar::SLOTS; i++)
+	//{
+	//	float x = startX + i * (Hotbar::SLOT_SIZE + Hotbar::PADDING);
+	//	if (worldPos.x >= x && worldPos.x < x + Hotbar::SLOT_SIZE && worldPos.y >= startY && worldPos.y < startY + Hotbar::SLOT_SIZE)
+	//	{
+	//		player.getHotbar().setSelected(i);
+	//		break;
+	//	}
+	//}
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "constants.hpp"
-#include "hotbar.hpp"
+#include "inventory.hpp"
 #include <cmath>
 #include "block.hpp"
 
@@ -17,7 +17,9 @@ private:
 	float jumpVel = 900;
 	bool jumped = false;
 	bool creativeGoingDown = false;
-	Hotbar hotbar;
+	InventoryLayout inventoryLayout;
+	Inventory inventory;
+	ItemStack itemOnHold;
 	sf::View camera;
 	bool inWater = false;
 	bool CREATIVE = false;
@@ -34,6 +36,7 @@ public:
 
 	Player(sf::Texture &tex, sf::Vector2f pos, sf::Vector2f size) : text(tex), sprite(text)
 	{
+		itemOnHold = ItemStack(Item::none, 1);
 		//sprite.setOrigin({
 			//text.getSize().x / 2.f,
 			//0.f
@@ -123,8 +126,15 @@ public:
 		sf::Vector2f newVel = vel;
 		setVelocity({ newVel.x + velocity.x, newVel.y + velocity.y });
 	}
-	Hotbar& getHotbar() {
-		return hotbar;
+	InventoryLayout& getInventoryLayout() {
+		return inventoryLayout;
+	}
+	Inventory& getInventory() {
+		return inventory;
+	}
+	ItemStack& getItemOnHold()
+ 	{
+		return itemOnHold;
 	}
 	sf::View& getCamera() {
 		return camera;
