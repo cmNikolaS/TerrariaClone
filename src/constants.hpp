@@ -62,6 +62,7 @@ struct RenderContext
 	sf::Texture blocksAtlas;
 	sf::Texture playerTexture;
 	sf::Texture backgroundTexture;
+	sf::Texture hearts;
 	MobTextures mobTextures;
 	sf::Font font;
 	RenderContext(sf::VideoMode vm, const std::string& title) : window(vm, title)

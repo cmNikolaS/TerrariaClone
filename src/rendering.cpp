@@ -69,15 +69,6 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
 	rc.window.setView(camera);
 }
 
-void drawCoordinates(RenderContext& rc, Player& player)
-{
-	sf::Text text(rc.font, "Coordinates\n\tX: " + std::to_string(static_cast<ui16>(player.getPos().x / tileSize)) + "\n\tY: " + std::to_string(worldH - static_cast<ui16>(player.getPos().y / tileSize)), 10);
-	sf::Vector2f pos = getCameraPos(player.getCamera());
-	text.setFillColor(sf::Color::Black);
-	text.setPosition({ pos.x + 20, pos.y + 20 });
-	rc.window.draw(text);
-}
-
 void drawHotbar(RenderContext& rc, Player& player)
 {
 	const float total = Hotbar::SLOTS * (Hotbar::SLOT_SIZE + Hotbar::PADDING) - Hotbar::PADDING;
@@ -115,6 +106,42 @@ void drawFPS(RenderContext& rc)
 
 }
 
+void drawCoordinates(RenderContext& rc, Player& player)
+{
+	sf::Text text(rc.font, "Coordinates\n\tX: " + std::to_string(static_cast<ui16>(player.getPos().x / tileSize)) + "\n\tY: " + std::to_string(worldH - static_cast<ui16>(player.getPos().y / tileSize)), 10);
+	sf::Vector2f pos = getCameraPos(player.getCamera());
+	text.setFillColor(sf::Color::Black);
+	text.setPosition({ pos.x + 20, pos.y + 20 });
+	rc.window.draw(text);
+}
+
+
+void drawHearts(RenderContext& rc, Player& player)
+{
+	int heartType = 0;
+	sf::Vector2f pos = getCameraPos(player.getCamera());
+	sf::Vector2f topRightPos = { pos.x + player.getCamera().getSize().x, pos.y };
+	int heartSize = 32;
+	int numberOfHearts = 5;
+	int paddingBetweenHearts = 4;
+	int topPadding = 16;
+	int rightPadding = 8;
+
+
+	sf::Vector2f drawPosStart = 
+	{topRightPos.x - (heartSize + paddingBetweenHearts) * numberOfHearts - rightPadding,
+	topRightPos.y + topPadding};
+
+	for (int i = 0; i < numberOfHearts; i++)
+	{
+		sf::Sprite heartSprite(rc.hearts);
+		heartSprite.setTextureRect(getAtlasTextures(heartType));
+		heartSprite.setPosition(drawPosStart);
+		rc.window.draw(heartSprite);
+		drawPosStart.x += (heartSize + numberOfHearts);
+	}
+}
+
 void drawGameUI(RenderContext& rc, Player& player)
 {
 	//coordinates
@@ -125,4 +152,7 @@ void drawGameUI(RenderContext& rc, Player& player)
 
 	//hotbar
 	drawHotbar(rc, player);
+
+	//hearts
+	drawHearts(rc, player);
 }

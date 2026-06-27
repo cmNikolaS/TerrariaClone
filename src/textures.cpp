@@ -11,6 +11,9 @@ void initTextures(RenderContext &rc)
 	PERMA_ASSERT_MSG(rc.playerTexture.loadFromFile("resources/Textures/player.png"), "Cant Load Player Textures");
 	rc.playerTexture.setSmooth(false);
 
+	//hearts
+	PERMA_ASSERT_MSG(rc.hearts.loadFromFile("resources/Textures/hearts.png"), "Cant Load Hearts Texture");
+
 	//font
 	PERMA_ASSERT_MSG(rc.font.openFromFile("resources/cursyger.ttf"), "Cant Load Font From A File");
 
