@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <vector>
 #include "constants.hpp"
 #include "block.hpp"
 #include "items.hpp"

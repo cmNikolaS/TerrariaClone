@@ -20,11 +20,26 @@ private:
 	InventoryLayout inventoryLayout;
 	Inventory inventory;
 	ItemStack itemOnHold;
+	int activeSlot = 0;
 	sf::View camera;
 	bool inWater = false;
 	bool CREATIVE = false;
 
 public:
+	int getActiveSlot()
+	{
+		return activeSlot;
+	}
+
+	void setActiveSlot(int aS)
+	{
+		activeSlot = aS;
+		if (aS >= Inventory::HOTBAR)
+			activeSlot = 0;
+		else if (aS < 0)
+			activeSlot = Inventory::HOTBAR - 1;
+	}
+
 	bool isInCreative() const
 	{
 		return CREATIVE;

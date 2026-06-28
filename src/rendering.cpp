@@ -129,6 +129,15 @@ void drawInventory(RenderContext& rc, Player& player)
 	{
 		if (!rc.insideInventory && c >= Inventory::HOTBAR) break;
 		c++;
+
+		if (player.getActiveSlot() == slot.inventoryIndex)
+		{
+			sf::RectangleShape sl({ slot.rect.size.x+6, slot.rect.size.y+6 });
+			sl.setPosition({ slot.rect.position.x - 3, slot.rect.position.y -3 });
+			sl.setFillColor({ 36, 26, 176, 130 });
+			rc.window.draw(sl);
+		}
+
 		sf::RectangleShape sl(slot.rect.size);
 		sl.setPosition(slot.rect.position);
 		sl.setFillColor({20, 140, 120, 130});
