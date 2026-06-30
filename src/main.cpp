@@ -23,25 +23,7 @@
 #include "textures.hpp"
 #include "permaAssert.hpp"
 #include "background.hpp"
-
-void updateCamera(sf::View& camera, sf::Vector2f playerPosition)
-{
-	sf::Vector2f cameraCenter = playerPosition;
-	sf::Vector2f cameraSize = camera.getSize();
-	
-	float worldWidthPixels = worldW * tileSize;
-	float worldHeightPixels = worldH * tileSize;
-
-	float minX = cameraSize.x / 2.f + tileSize;
-	float maxX = worldWidthPixels - minX;
-
-	float minY = cameraSize.y / 2.f + tileSize;
-	float maxY = worldHeightPixels - minY;
-
-	cameraCenter.x = std::clamp(cameraCenter.x, minX, maxX);
-	cameraCenter.y = std::clamp(cameraCenter.y, minY, maxY);
-	camera.setCenter(cameraCenter);
-}
+#include "ui.hpp"
 
 sf::Color darknessColor = { 7, 2, 20, darknessLevel };
 
@@ -74,10 +56,9 @@ int main()
 		inv.slots[1] = ItemStack(Item::grassBlock, 64);
 		inv.slots[2] = ItemStack(Item::stone, 64);
 
-
 		//CAMERA
 		sf::View playerCamera(sf::FloatRect({ 0.f, 0.f }, { (float)WINDOW_W, (float)WINDOW_H }));
-		playerCamera.zoom(0.85f);
+		playerCamera.zoom(gs.zoomLevel);
 		player.getCamera() = playerCamera;
 		
 		sf::View mapView;
@@ -107,11 +88,18 @@ int main()
 
 			if (mgs == MainGameState::Menu)
 			{
+				cycle.pause();
 				gm.playNow(GameMusic::Track::Title);
+				ui8 action = handleMainMenuInput(rc);
+				if (action == Widget::leave)
+					rc.window.close();
+				if (action == Widget::play)
+					mgs = MainGameState::Playing;
 				drawMenu(rc);
 			}
 			else if (mgs == MainGameState::Playing)
 			{
+				cycle.unpause();
 				gm.playNow((cycle.isItDay()) ? GameMusic::Track::Day : GameMusic::Track::Night);
 				cycle.update(dt);
 				if (gs.playerCamera)
@@ -127,7 +115,7 @@ int main()
 					player.setVelocity({ 0.f, player.getVelocity().y });
 					handlePlayerInput(rc.window, player, dt);
 					updatePlayer(player, wc, dt);
-					updateCamera(player.getCamera(), player.getPos());
+					player.updateCamera();
 
 					//View
 					rc.window.setView(player.getCamera());

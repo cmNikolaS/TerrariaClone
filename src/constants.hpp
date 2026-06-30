@@ -80,6 +80,7 @@ struct WorldContext
 struct GameState
 {
 	bool playerCamera = true, restart = true, close = false;
+	float zoomLevel = 0.85f;
 };
 
 struct GameClocks

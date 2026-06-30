@@ -3,6 +3,7 @@
 #include "player.hpp"
 #include "constants.hpp"
 #include "input.hpp"
+#include "ui.hpp"
 #include "block.hpp"
 
 void handlePlayerInput(const sf::Window &window, Player& player, const float dt)
@@ -77,6 +78,32 @@ bool getMouseRightClickPos(sf::Vector2i& pos, sf::RenderWindow& window)
 	return false;
 }
 
+ui8 handleMainMenuInput(RenderContext& rc)
+{
+	if (!rc.window.hasFocus()) return 0;
+
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+		return 0;
+
+	UILayout mainMenuLayout;
+
+	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
+	rc.window.setView(uiView);
+
+	mainMenuLayout.build(uiView.getSize());
+
+	sf::Vector2i mousePixel = sf::Mouse::getPosition(rc.window);
+	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, uiView);
+
+	for (const auto &w : mainMenuLayout.widgets)
+	{
+		if (w.rect.contains(mousePos))
+		{
+			return w.action;
+		}
+	}
+}
+
 void handleInventoryInput(RenderContext& rc, Player& player, InventoryClickState &clickState, bool& wasUIClicked)
 {
 	wasUIClicked = false;
@@ -91,8 +118,9 @@ void handleInventoryInput(RenderContext& rc, Player& player, InventoryClickState
 	clickState.leftWasDown = leftDown;
 	clickState.rightWasDown = rightDown;
 
+	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
 	sf::Vector2i mousePixel = sf::Mouse::getPosition(rc.window);
-	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, rc.window.getDefaultView());
+	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, uiView);
 
 	InventoryLayout& layout = player.getInventoryLayout();
 	Inventory& inventory = player.getInventory();
@@ -220,7 +248,14 @@ void handleEvents(RenderContext &rc, Player& player,
 		if (!rc.window.hasFocus()) continue;
 		if (event->is<sf::Event::Closed>())
 			rc.window.close();
+		if (auto resized = event->getIf<sf::Event::Resized>())
+		{
+			float width = static_cast<float>(resized->size.x);
+			float height = static_cast<float>(resized->size.y);
 
+			sf::View& camera = player.getCamera();
+			camera.setSize({ width * gs.zoomLevel, height * gs.zoomLevel });
+		}
 		if (auto key = event->getIf<sf::Event::KeyPressed>())
 		{
 			if (key->code == sf::Keyboard::Key::V && mgs == MainGameState::Playing)

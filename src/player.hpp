@@ -39,7 +39,24 @@ public:
 		else if (aS < 0)
 			activeSlot = Inventory::HOTBAR - 1;
 	}
+	void updateCamera()
+	{
+		sf::Vector2f cameraCenter = sprite.getPosition();
+		sf::Vector2f cameraSize = camera.getSize();
 
+		float worldWidthPixels = worldW * tileSize;
+		float worldHeightPixels = worldH * tileSize;
+
+		float minX = cameraSize.x / 2.f + tileSize;
+		float maxX = worldWidthPixels - minX;
+
+		float minY = cameraSize.y / 2.f + tileSize;
+		float maxY = worldHeightPixels - minY;
+
+		cameraCenter.x = std::clamp(cameraCenter.x, minX, maxX);
+		cameraCenter.y = std::clamp(cameraCenter.y, minY, maxY);
+		camera.setCenter(cameraCenter);
+	}
 	bool isInCreative() const
 	{
 		return CREATIVE;

@@ -7,31 +7,50 @@
 #include <string>
 #include "textures.hpp"
 #include <cmath>
+#include "ui.hpp"
+#include "background.hpp"
 
 void drawMenu(RenderContext& rc)
 {
-	sf::View MenuView;
+	sf::View MenuView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
 	rc.window.setView(MenuView);
-	sf::Text wmsg(rc.font, "WELCOME TO TERRARIA CLONE", 30);
-	auto size = wmsg.getGlobalBounds().size;
-	wmsg.setPosition({MenuView.getCenter().x - size.x / 2.f, MenuView.getCenter().y / 2.f});
-	std::string controlsStr = \
-		"Controls\n\n"\
-		"\tESC - Menu / Game\n"\
-		"\tV - Open Map View\n"\
-		"\tR - Render New World\n"\
-		"\tC - Enter / Leave Creative Mode\n"\
-		"\tA - Left					D - Right\n"\
-		"\tSPACE - Jump/Fly			S - Go Down\n"\
-		"\tLeftClick - Destroy		RightClick - Place\n"\
-		"\tScroll - Navigate Hotbar\n\n"\
-		"\tQ - Quit";
 
-	sf::Text options(rc.font, controlsStr, 15);
-	options.setPosition({ wmsg.getPosition().x + 50.f, wmsg.getPosition().y + 150.f });
+	Background background;
+	background.draw(0.f, rc.window, MenuView, rc.backgroundTexture, MenuView.getCenter());
 
-	rc.window.draw(wmsg);
-	rc.window.draw(options);
+	UILayout startMenu;
+	startMenu.build(sf::Vector2f(rc.window.getSize()));
+
+	sf::RectangleShape widget;
+	widget.setFillColor(sf::Color({ 210,210,210,210 }));
+	for (const auto &w : startMenu.widgets)
+	{
+		widget.setSize(w.rect.size);
+		widget.setPosition(w.rect.position);
+		rc.window.draw(widget);
+
+		if (!w.text.empty())
+		{
+			int refSize = 50;
+			sf::Text wT(rc.font, w.text, refSize);
+			
+			sf::FloatRect refBounds = wT.getLocalBounds();
+			
+			float maxTextHeight = w.rect.size.y * 0.6f;
+			float maxTextWidth = w.rect.size.x * 0.8f;
+
+			float scale = std::min(maxTextWidth / refBounds.size.x, maxTextHeight / refBounds.size.y);
+
+			wT.setCharacterSize(scale * refSize);
+			
+			sf::FloatRect textBounds = wT.getLocalBounds();
+
+			wT.setPosition
+			({ w.rect.position.x + (w.rect.size.x - textBounds.size.x) / 2.f,
+			   w.rect.position.y + (w.rect.size.y - textBounds.size.y) / 2.f * 1.5f });
+			rc.window.draw(wT);
+		}
+	}
 }
 
 void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera)
@@ -112,7 +131,8 @@ void drawHearts(RenderContext& rc, Player& player)
 void drawInventory(RenderContext& rc, Player& player)
 {
 	auto oldView = rc.window.getView();
-	rc.window.setView(rc.window.getDefaultView());
+	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
+	rc.window.setView(uiView);
 
 	auto& invLayout = player.getInventoryLayout();
 	auto& inv = player.getInventory();
