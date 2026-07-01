@@ -5,6 +5,10 @@
 #include <array>
 #include <SFML/Graphics.hpp>
 #include "block.hpp"
+#include "ui.hpp"
+
+class Slider;
+class UILayout;
 
 extern float mobSpawnTimer;
 
@@ -57,6 +61,15 @@ enum class MainGameState : ui8
 using MobTextures = std::vector<sf::Texture>;
 using Map = std::vector<std::vector<int>>;
 
+struct Settings
+{
+	float SFX = 0.5f;
+	float Music = 0.7f;
+	float Zoom = 0.85f;
+};
+
+extern Settings gSettings;
+
 struct RenderContext
 {
 	sf::RenderWindow window;
@@ -67,6 +80,8 @@ struct RenderContext
 	MobTextures mobTextures;
 	sf::Font font;
 	bool insideInventory = false;
+	Slider* activeSlider = nullptr;
+	UILayout settingsLayout;
 	RenderContext(sf::VideoMode vm, const std::string& title) : window(vm, title)
 	{
 	}
@@ -81,7 +96,6 @@ struct WorldContext
 struct GameState
 {
 	bool playerCamera = true, restart = true, close = false;
-	float zoomLevel = 0.85f;
 };
 
 struct GameClocks

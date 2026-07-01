@@ -54,9 +54,12 @@ void drawMenu(RenderContext& rc)
 				   w->rect.position.y + (w->rect.size.y - textBounds.size.y) / 2.f * 1.5f });
 				rc.window.draw(wT);
 			}
+			break;
 			}
 		default:
+		{
 			break;
+		}
 		}
 		
 	}
@@ -73,10 +76,7 @@ void drawSettingsMenu(RenderContext &rc)
 	int windowW = rc.window.getSize().x;
 	int windowH = rc.window.getSize().y;
 
-	UILayout settingsUI;
-	settingsUI.build(rc.window.getSize(), UILayout::Settings);
-
-	for (const auto& w : settingsUI.widgets)
+	for (const auto& w : rc.settingsLayout.widgets)
 	{
 		switch (w->getType())
 		{
@@ -92,9 +92,12 @@ void drawSettingsMenu(RenderContext &rc)
 			slider.setPosition(s->knobRect.position);
 			slider.setFillColor({ 93,113,212 });
 			rc.window.draw(slider);
+			break;
 		}
 		default:
+		{
 			break;
+		}
 		}
 	}
 }

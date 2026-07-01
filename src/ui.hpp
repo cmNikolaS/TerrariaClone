@@ -3,7 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
-#include "constants.hpp"
+//#include "constants.hpp"
+#include <cstdint>
+
+using ui8 = std::uint8_t;
 
 class Widget
 {
@@ -23,8 +26,8 @@ public:
 		play,
 		leave,
 		settings
-	};
-	ui8 action = none;
+	}action = none;
+	
 	virtual widgetType getType() const = 0;
 	virtual ~Widget() = default;
 };
@@ -40,7 +43,14 @@ class Slider : public Widget
 {
 public:
 	widgetType getType() const override { return widgetType::slider; }
-
+	enum Setting
+	{
+		None,
+		Music,
+		SFX,
+		Zoom
+	} setting = Setting::None;
+	bool dragging = false;
 	sf::FloatRect knobRect;
 	float value = 0.5f;
 	float minVal = 0.f;

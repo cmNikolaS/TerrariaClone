@@ -1,6 +1,7 @@
 #include "ui.hpp"
 #include "constants.hpp"
 #include <SFML/Graphics.hpp>
+using ui8 = std::uint8_t;
 
 void UILayout::build(sf::Vector2u windowsSize, ui8 menu)
 {
@@ -75,11 +76,35 @@ void UILayout::build(sf::Vector2u windowsSize, ui8 menu)
 			auto sliderW = std::make_unique<Slider>();
 			sliderW->rect = sliderLine;
 
-			float sliderPosX = sliderLinePosX + (sliderLineX - sliderSize) / 2.f;
+			float fullness = (sliderLineX - sliderSize);
+
+			if (i == 0)
+			{
+				sliderW->text = "SFX";
+				sliderW->setting = Slider::SFX;
+				fullness *= gSettings.SFX;
+			}
+			else if (i == 1)
+			{
+				sliderW->text = "Music";
+				sliderW->setting = Slider::Music;
+				fullness *= gSettings.Music;
+			}
+			else if (i == 2)
+			{
+				sliderW->text = "Zoom";
+				sliderW->setting = Slider::Zoom;
+				fullness *= gSettings.Zoom;
+			}
+
+			float sliderPosX = sliderLinePosX + fullness;
 			float sliderPosY = sliderLinePosY - (sliderSize - sliderLineY) / 2.f;
 			slider.position = { sliderPosX, sliderPosY };
 			
 			sliderW->knobRect = slider;
+
+
+
 			widgets.push_back(std::move(sliderW));
 		}
 	}

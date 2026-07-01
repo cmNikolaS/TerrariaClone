@@ -18,7 +18,7 @@ void initTextures(RenderContext &rc)
 	PERMA_ASSERT_MSG(rc.font.openFromFile("resources/cursyger.ttf"), "Cant Load Font From A File");
 
 	//background textures
-	rc.backgroundTexture.loadFromFile("resources/forestBG.png");
+	PERMA_ASSERT_MSG(rc.backgroundTexture.loadFromFile("resources/forestBG.png"), "Cant Load Forest BG Texture");
 	rc.backgroundTexture.setRepeated(true);
 
 	//block textures

@@ -19,3 +19,5 @@ void handleMouseClicks(RenderContext& rc, WorldContext& wc,
 void handleInventoryInput(RenderContext& rc, Player& player, InventoryClickState& clickState, bool &wasUIClicked);
 
 ui8 handleMainMenuInput(RenderContext& rc);
+
+void handleSettingsMenuInput(RenderContext& rc);

@@ -31,6 +31,7 @@ int main()
 {
 	InventoryClickState clickState;
 	RenderContext rc(sf::VideoMode({ WINDOW_W, WINDOW_H }), window_title);
+	rc.settingsLayout.build(rc.window.getSize(), UILayout::Settings);
 	initTextures(rc);
 	WorldContext wc;
 	initBlocks(wc.blocks);
@@ -58,7 +59,7 @@ int main()
 
 		//CAMERA
 		sf::View playerCamera(sf::FloatRect({ 0.f, 0.f }, { (float)WINDOW_W, (float)WINDOW_H }));
-		playerCamera.zoom(gs.zoomLevel);
+		playerCamera.zoom(gSettings.Zoom);
 		player.getCamera() = playerCamera;
 		
 		sf::View mapView;
@@ -86,6 +87,8 @@ int main()
 
 			rc.window.clear();
 
+			gm.updateVolume();
+
 			if (mgs == MainGameState::Menu)
 			{
 				cycle.pause();
@@ -104,8 +107,8 @@ int main()
 				cycle.pause();
 				gm.playNow(GameMusic::Track::Title);
 
-
-
+				handleSettingsMenuInput(rc);
+				
 				drawSettingsMenu(rc);
 			}
 			else if (mgs == MainGameState::Playing)
@@ -126,6 +129,11 @@ int main()
 					player.setVelocity({ 0.f, player.getVelocity().y });
 					handlePlayerInput(rc.window, player, dt);
 					updatePlayer(player, wc, dt);
+					auto& camera = player.getCamera();
+					camera.setSize({
+						rc.window.getSize().x * gSettings.Zoom,
+						rc.window.getSize().y * gSettings.Zoom
+						});
 					player.updateCamera();
 
 					//View

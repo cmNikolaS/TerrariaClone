@@ -5,6 +5,7 @@
 #include "input.hpp"
 #include "ui.hpp"
 #include "block.hpp"
+#include <iostream>
 
 void handlePlayerInput(const sf::Window &window, Player& player, const float dt)
 {
@@ -100,6 +101,62 @@ ui8 handleMainMenuInput(RenderContext& rc)
 		if (w->rect.contains(mousePos))
 		{
 			return w->action;
+		}
+	}
+	return 0;
+}
+
+void handleSettingsMenuInput(RenderContext& rc)
+{
+	if (!rc.window.hasFocus()) return;
+
+	if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	{
+		if (rc.activeSlider)
+			rc.activeSlider->dragging = false;
+		rc.activeSlider = nullptr;
+		return;
+	}
+
+	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
+	rc.window.setView(uiView);
+
+	sf::Vector2i mousePixel = sf::Mouse::getPosition(rc.window);
+	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, uiView);
+
+	for (const auto& w : rc.settingsLayout.widgets)
+	{
+		if (w->getType() == Widget::widgetType::slider)
+		{
+			Slider* slider = static_cast<Slider*>(w.get());
+			if (!slider->knobRect.contains(mousePos))continue;
+			rc.activeSlider = slider;
+			slider->dragging = true;
+			break;
+		}
+	}
+
+	if (rc.activeSlider)
+	{
+		float x = std::clamp(mousePos.x,
+			rc.activeSlider->rect.position.x,
+			rc.activeSlider->rect.position.x + rc.activeSlider->rect.size.x);
+		
+		rc.activeSlider->value = (x - rc.activeSlider->rect.position.x) / rc.activeSlider->rect.size.x;
+	
+		rc.activeSlider->knobRect.position.x = x - rc.activeSlider->knobRect.size.x / 2.f;
+
+		if (rc.activeSlider->setting == Slider::Music)
+		{
+			gSettings.Music = rc.activeSlider->value;
+		}
+		else if (rc.activeSlider->setting == Slider::SFX)
+		{
+			gSettings.SFX = rc.activeSlider->value;
+		}
+		else if (rc.activeSlider->setting == Slider::Zoom)
+		{
+			gSettings.Zoom = 0.66f + (1.f - rc.activeSlider->value) * 0.75f;
 		}
 	}
 }
@@ -254,7 +311,9 @@ void handleEvents(RenderContext &rc, Player& player,
 			float height = static_cast<float>(resized->size.y);
 
 			sf::View& camera = player.getCamera();
-			camera.setSize({ width * gs.zoomLevel, height * gs.zoomLevel });
+			camera.setSize({ width * gSettings.Zoom, height * gSettings.Zoom});
+
+			rc.settingsLayout.build(sf::Vector2u(resized->size), UILayout::Settings);
 		}
 		if (auto key = event->getIf<sf::Event::KeyPressed>())
 		{
@@ -297,8 +356,6 @@ void handleMouseClicks(RenderContext& rc, WorldContext& wc, Player& player, Game
 {
 	if (!rc.window.hasFocus()) return;
 	sf::Vector2i clickPos = {0, 0};
-	
-	
 	
 	if (getMouseLeftClickPos(clickPos, rc.window) && gc.leftClickPress.getElapsedTime().asSeconds() > leftMouseClickCooldown)
 	{
