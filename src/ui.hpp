@@ -11,7 +11,13 @@ public:
 
 	sf::FloatRect rect;
 	std::string text = {};
-	enum
+	enum widgetType
+	{
+		button,
+		slider,
+		label
+	};
+	enum Action
 	{
 		none,
 		play,
@@ -19,16 +25,38 @@ public:
 		settings
 	};
 	ui8 action = none;
+	virtual widgetType getType() const = 0;
+	virtual ~Widget() = default;
+};
+
+class Button : public Widget
+{
+public:
+	widgetType getType() const override { return widgetType::button; }
 
 };
 
+class Slider : public Widget
+{
+public:
+	widgetType getType() const override { return widgetType::slider; }
+
+	sf::FloatRect knobRect;
+	float value = 0.5f;
+	float minVal = 0.f;
+	float maxVal = 1.f;
+};
 
 class UILayout
 {
 public:
+	enum {
+		MainMenu,
+		Settings
+	};
 
-	std::vector<Widget> widgets;
+	std::vector<std::unique_ptr<Widget>> widgets;
 
-	void build(const sf::Vector2f windowsSize);
+	void build(const sf::Vector2u windowsSize, ui8 menu);
 
 };

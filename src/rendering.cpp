@@ -19,36 +19,82 @@ void drawMenu(RenderContext& rc)
 	background.draw(0.f, rc.window, MenuView, rc.backgroundTexture, MenuView.getCenter());
 
 	UILayout startMenu;
-	startMenu.build(sf::Vector2f(rc.window.getSize()));
+	startMenu.build(rc.window.getSize(), UILayout::MainMenu);
 
 	sf::RectangleShape widget;
 	widget.setFillColor(sf::Color({ 210,210,210,210 }));
 	for (const auto &w : startMenu.widgets)
 	{
-		widget.setSize(w.rect.size);
-		widget.setPosition(w.rect.position);
-		rc.window.draw(widget);
-
-		if (!w.text.empty())
+		switch (w->getType())
 		{
-			int refSize = 50;
-			sf::Text wT(rc.font, w.text, refSize);
-			
-			sf::FloatRect refBounds = wT.getLocalBounds();
-			
-			float maxTextHeight = w.rect.size.y * 0.6f;
-			float maxTextWidth = w.rect.size.x * 0.8f;
+		case Widget::widgetType::button:
+			{
+			widget.setSize(w->rect.size);
+			widget.setPosition(w->rect.position);
+			rc.window.draw(widget);
 
-			float scale = std::min(maxTextWidth / refBounds.size.x, maxTextHeight / refBounds.size.y);
+			if (!w->text.empty())
+			{
+				int refSize = 50;
+				sf::Text wT(rc.font, w->text, refSize);
 
-			wT.setCharacterSize(scale * refSize);
-			
-			sf::FloatRect textBounds = wT.getLocalBounds();
+				sf::FloatRect refBounds = wT.getLocalBounds();
 
-			wT.setPosition
-			({ w.rect.position.x + (w.rect.size.x - textBounds.size.x) / 2.f,
-			   w.rect.position.y + (w.rect.size.y - textBounds.size.y) / 2.f * 1.5f });
-			rc.window.draw(wT);
+				float maxTextHeight = w->rect.size.y * 0.6f;
+				float maxTextWidth = w->rect.size.x * 0.8f;
+
+				float scale = std::min(maxTextWidth / refBounds.size.x, maxTextHeight / refBounds.size.y);
+
+				wT.setCharacterSize(scale * refSize);
+
+				sf::FloatRect textBounds = wT.getLocalBounds();
+
+				wT.setPosition
+				({ w->rect.position.x + (w->rect.size.x - textBounds.size.x) / 2.f,
+				   w->rect.position.y + (w->rect.size.y - textBounds.size.y) / 2.f * 1.5f });
+				rc.window.draw(wT);
+			}
+			}
+		default:
+			break;
+		}
+		
+	}
+}
+
+void drawSettingsMenu(RenderContext &rc)
+{
+	sf::View MenuView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
+	rc.window.setView(MenuView);
+
+	Background background;
+	background.draw(0.f, rc.window, MenuView, rc.backgroundTexture, MenuView.getCenter());
+		
+	int windowW = rc.window.getSize().x;
+	int windowH = rc.window.getSize().y;
+
+	UILayout settingsUI;
+	settingsUI.build(rc.window.getSize(), UILayout::Settings);
+
+	for (const auto& w : settingsUI.widgets)
+	{
+		switch (w->getType())
+		{
+		case Widget::widgetType::slider:
+		{
+			Slider* s = static_cast<Slider*> (w.get());
+			sf::RectangleShape slider;
+			slider.setSize(s->rect.size);
+			slider.setPosition(s->rect.position);
+			slider.setFillColor({ 210,210,210,210 });
+			rc.window.draw(slider);
+			slider.setSize(s->knobRect.size);
+			slider.setPosition(s->knobRect.position);
+			slider.setFillColor({ 93,113,212 });
+			rc.window.draw(slider);
+		}
+		default:
+			break;
 		}
 	}
 }

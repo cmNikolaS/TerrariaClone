@@ -90,16 +90,16 @@ ui8 handleMainMenuInput(RenderContext& rc)
 	sf::View uiView(sf::FloatRect({ 0.f, 0.f }, sf::Vector2f(rc.window.getSize())));
 	rc.window.setView(uiView);
 
-	mainMenuLayout.build(uiView.getSize());
+	mainMenuLayout.build(rc.window.getSize(), UILayout::MainMenu);
 
 	sf::Vector2i mousePixel = sf::Mouse::getPosition(rc.window);
 	sf::Vector2f mousePos = rc.window.mapPixelToCoords(mousePixel, uiView);
 
 	for (const auto &w : mainMenuLayout.widgets)
 	{
-		if (w.rect.contains(mousePos))
+		if (w->rect.contains(mousePos))
 		{
-			return w.action;
+			return w->action;
 		}
 	}
 }

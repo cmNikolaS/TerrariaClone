@@ -10,3 +10,5 @@ void drawScreen(RenderContext& rc, const WorldContext& wc, sf::View& camera);
 void drawGameUI(RenderContext& rc, Player& player);
 
 void drawMenu(RenderContext& rc);
+
+void drawSettingsMenu(RenderContext& rc);

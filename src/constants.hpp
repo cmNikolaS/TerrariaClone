@@ -50,7 +50,8 @@ constexpr float rightMouseClickCooldown = 0.1f;
 enum class MainGameState : ui8
 {
 	Menu = 0,
-	Playing
+	Playing,
+	Settings
 };
 
 using MobTextures = std::vector<sf::Texture>;

@@ -95,7 +95,18 @@ int main()
 					rc.window.close();
 				if (action == Widget::play)
 					mgs = MainGameState::Playing;
+				else if (action == Widget::settings)
+					mgs = MainGameState::Settings;
 				drawMenu(rc);
+			}
+			else if (mgs == MainGameState::Settings)
+			{
+				cycle.pause();
+				gm.playNow(GameMusic::Track::Title);
+
+
+
+				drawSettingsMenu(rc);
 			}
 			else if (mgs == MainGameState::Playing)
 			{
